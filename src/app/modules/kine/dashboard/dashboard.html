@@ -1,0 +1,864 @@
+<div class="min-h-screen bg-gray-50 dark:bg-slate-950">
+
+  <!-- Navbar -->
+  <nav class="bg-white dark:bg-slate-900 border-b
+              border-gray-200 dark:border-slate-800
+              px-6 h-14 flex items-center
+              justify-between sticky top-0 z-10">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 bg-blue-50 dark:bg-blue-950
+                  rounded-lg flex items-center
+                  justify-center">
+        <svg class="w-4 h-4 text-blue-600" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12
+                   20.364l7.682-7.682a4.5 4.5 0
+                   00-6.364-6.364L12 7.636l-1.318-1.318
+                   a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+      </div>
+      <span class="font-medium text-sm
+                   text-gray-900 dark:text-white">
+        KINEAI
+      </span>
+      <span class="text-xs bg-green-50 dark:bg-green-950
+                   text-green-600 dark:text-green-400
+                   px-2 py-0.5 rounded-full border
+                   border-green-100 dark:border-green-900">
+        Kinésithérapeute
+      </span>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <div class="relative cursor-pointer"
+           (click)="activeTab.set('alerts')">
+        <svg class="w-5 h-5 text-gray-400" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032
+                   0 0118 14.158V11a6.002 6.002 0
+                   00-4-5.659V5a2 2 0 10-4 0v.341
+                   C7.67 6.165 6 8.388 6 11v3.159
+                   c0 .538-.214 1.055-.595 1.436L4
+                   17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+        </svg>
+        @if (dashboard() && dashboard()!.pendingAlerts > 0) {
+          <span class="absolute -top-1.5 -right-1.5
+                       min-w-[18px] h-[18px] px-1
+                       bg-red-500 text-white text-xs
+                       rounded-full flex items-center
+                       justify-center font-medium
+                       animate-pulse">
+            {{ dashboard()!.pendingAlerts }}
+          </span>
+        }
+      </div>
+
+      <div class="w-px h-5 bg-gray-200
+                  dark:bg-slate-700"></div>
+
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br
+                    from-green-400 to-emerald-600
+                    flex items-center justify-center
+                    text-xs font-medium text-white">
+          {{ kineName.charAt(0).toUpperCase() }}
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-900
+                    dark:text-white leading-none">
+            Dr. {{ kineName }}
+          </p>
+          <p class="text-xs text-gray-400
+                    dark:text-slate-500 mt-0.5">
+            Kinésithérapeute
+          </p>
+        </div>
+      </div>
+
+      <button (click)="logout()"
+              class="text-xs text-red-500
+                     hover:text-red-600 flex items-center
+                     gap-1.5 transition-colors px-3
+                     py-1.5 border border-red-100
+                     dark:border-red-900/50 rounded-lg
+                     hover:bg-red-50
+                     dark:hover:bg-red-950/30">
+        <svg class="w-3.5 h-3.5" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3
+                   3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0
+                   013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        Déconnexion
+      </button>
+    </div>
+  </nav>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="flex flex-col items-center
+                justify-center py-32 gap-3">
+      <div class="relative">
+        <div class="w-12 h-12 rounded-full border-2
+                    border-blue-100 dark:border-blue-900">
+        </div>
+        <div class="w-12 h-12 rounded-full border-2
+                    border-blue-500 border-t-transparent
+                    animate-spin absolute top-0 left-0">
+        </div>
+      </div>
+      <p class="text-sm text-gray-400 dark:text-slate-500">
+        Chargement du tableau de bord...
+      </p>
+    </div>
+  }
+
+  @if (!isLoading() && dashboard()) {
+    <div class="max-w-6xl mx-auto px-6 py-6">
+
+      <!-- Header -->
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h1 class="text-xl font-medium
+                     text-gray-900 dark:text-white">
+            Bonjour, Dr. {{ kineName }} 👋
+          </h1>
+          <p class="text-sm text-gray-500
+                    dark:text-slate-400 mt-1">
+            Voici un aperçu de vos patients aujourd'hui
+          </p>
+        </div>
+        <button (click)="loadDashboard()"
+                class="flex items-center gap-2 text-sm
+                       text-gray-500 dark:text-slate-400
+                       hover:text-gray-700
+                       dark:hover:text-white
+                       transition-colors border
+                       border-gray-200 dark:border-slate-700
+                       px-3 py-2 rounded-lg
+                       hover:bg-gray-50
+                       dark:hover:bg-slate-800">
+          <svg class="w-4 h-4" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round" stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001
+                     0 004.582 9m0 0H9m11 11v-5h-.581m0
+                     0a8.003 8.003 0 01-15.357-2m15.357
+                     2H15"/>
+          </svg>
+          Actualiser
+        </button>
+      </div>
+
+      <!-- Messages -->
+      @if (successMsg()) {
+        <div class="flex items-center gap-2
+                    bg-green-50 dark:bg-green-950/30
+                    border border-green-200
+                    dark:border-green-800 rounded-xl
+                    p-3 mb-5 text-sm text-green-700
+                    dark:text-green-400">
+          <svg class="w-4 h-4 shrink-0" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0
+                     11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          {{ successMsg() }}
+        </div>
+      }
+
+      @if (errorMsg()) {
+        <div class="flex items-center gap-2
+                    bg-red-50 dark:bg-red-950/30
+                    border border-red-200
+                    dark:border-red-800 rounded-xl
+                    p-3 mb-5 text-sm text-red-700
+                    dark:text-red-400">
+          <svg class="w-4 h-4 shrink-0" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0
+                     11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          {{ errorMsg() }}
+        </div>
+      }
+
+      <!-- Stats + Chart -->
+      <div class="grid grid-cols-3 gap-4 mb-6">
+
+        <!-- Stat cards -->
+        <div class="col-span-2 grid grid-cols-2
+                    gap-3">
+
+          <!-- Total patients -->
+          <div class="bg-white dark:bg-slate-900
+                      rounded-xl p-5 border
+                      border-gray-200
+                      dark:border-slate-800">
+            <div class="flex items-center
+                        justify-between mb-3">
+              <div class="w-9 h-9 bg-blue-50
+                          dark:bg-blue-950/50
+                          rounded-lg flex items-center
+                          justify-center">
+                <svg class="w-5 h-5 text-blue-500"
+                     fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M17 20h5v-2a3 3 0
+                           00-5.356-1.857M17 20H7m10
+                           0v-2c0-.656-.126-1.283-.356
+                           -1.857M7 20H2v-2a3 3 0
+                           015.356-1.857M7 20v-2c0
+                           -.656.126-1.283.356-1.857m0
+                           0a5.002 5.002 0 019.288 0
+                           M15 7a3 3 0 11-6 0 3 3 0
+                           016 0z"/>
+                </svg>
+              </div>
+              <span class="text-xs text-gray-400
+                           dark:text-slate-500
+                           bg-gray-50 dark:bg-slate-800
+                           px-2 py-1 rounded-lg">
+                Total
+              </span>
+            </div>
+            <p class="text-3xl font-medium
+                      text-gray-900 dark:text-white mb-1">
+              {{ dashboard()!.totalPatients }}
+            </p>
+            <p class="text-xs text-gray-400
+                      dark:text-slate-500">
+              patients suivis
+            </p>
+          </div>
+
+          <!-- Alertes actives -->
+          <div class="bg-white dark:bg-slate-900
+                      rounded-xl p-5 border
+                      border-gray-200
+                      dark:border-slate-800"
+               [class.border-red-200]="dashboard()!
+                 .pendingAlerts > 0"
+               [class.dark:border-red-900]="dashboard()!
+                 .pendingAlerts > 0">
+            <div class="flex items-center
+                        justify-between mb-3">
+              <div class="w-9 h-9 rounded-lg
+                          flex items-center
+                          justify-center"
+                   [class.bg-red-50]="dashboard()!
+                     .pendingAlerts > 0"
+                   [class.dark:bg-red-950]="dashboard()!
+                     .pendingAlerts > 0"
+                   [class.bg-gray-50]="dashboard()!
+                     .pendingAlerts === 0"
+                   [class.dark:bg-slate-800]="dashboard()!
+                     .pendingAlerts === 0">
+                <svg class="w-5 h-5"
+                     [class.text-red-500]="dashboard()!
+                       .pendingAlerts > 0"
+                     [class.text-gray-400]="dashboard()!
+                       .pendingAlerts === 0"
+                     fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938
+                           4h13.856c1.54 0 2.502-1.667
+                           1.732-3L13.732 4c-.77-1.333
+                           -2.694-1.333-3.464 0L3.34
+                           16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+              </div>
+              @if (dashboard()!.pendingAlerts > 0) {
+                <span class="text-xs text-red-600
+                             dark:text-red-400
+                             bg-red-50 dark:bg-red-950/50
+                             px-2 py-1 rounded-lg
+                             animate-pulse">
+                  Action requise
+                </span>
+              }
+            </div>
+            <p class="text-3xl font-medium mb-1"
+               [class.text-red-600]="dashboard()!
+                 .pendingAlerts > 0"
+               [class.dark:text-red-400]="dashboard()!
+                 .pendingAlerts > 0"
+               [class.text-gray-900]="dashboard()!
+                 .pendingAlerts === 0"
+               [class.dark:text-white]="dashboard()!
+                 .pendingAlerts === 0">
+              {{ dashboard()!.pendingAlerts }}
+            </p>
+            <p class="text-xs text-gray-400
+                      dark:text-slate-500">
+              alertes actives
+            </p>
+          </div>
+
+          <!-- Inactivité -->
+          <div class="bg-white dark:bg-slate-900
+                      rounded-xl p-5 border
+                      border-gray-200
+                      dark:border-slate-800">
+            <div class="flex items-center
+                        justify-between mb-3">
+              <div class="w-9 h-9 bg-amber-50
+                          dark:bg-amber-950/50
+                          rounded-lg flex items-center
+                          justify-center">
+                <svg class="w-5 h-5 text-amber-500"
+                     fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0
+                           11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <span class="text-xs text-amber-600
+                           dark:text-amber-400
+                           bg-amber-50 dark:bg-amber-950/50
+                           px-2 py-1 rounded-lg">
+                RG-23
+              </span>
+            </div>
+            <p class="text-3xl font-medium
+                      text-gray-900 dark:text-white mb-1">
+              {{ unresolvedAlerts
+                 .filter(a => a.type === 'INACTIVITY')
+                 .length }}
+            </p>
+            <p class="text-xs text-gray-400
+                      dark:text-slate-500">
+              inactivité &gt; 3 jours
+            </p>
+          </div>
+
+          <!-- Score faible -->
+          <div class="bg-white dark:bg-slate-900
+                      rounded-xl p-5 border
+                      border-gray-200
+                      dark:border-slate-800">
+            <div class="flex items-center
+                        justify-between mb-3">
+              <div class="w-9 h-9 bg-orange-50
+                          dark:bg-orange-950/50
+                          rounded-lg flex items-center
+                          justify-center">
+                <svg class="w-5 h-5 text-orange-500"
+                     fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 17h8m0 0V9m0 8
+                           l-8-8-4 4-6-6"/>
+                </svg>
+              </div>
+              <span class="text-xs text-orange-600
+                           dark:text-orange-400
+                           bg-orange-50
+                           dark:bg-orange-950/50
+                           px-2 py-1 rounded-lg">
+                RG-24
+              </span>
+            </div>
+            <p class="text-3xl font-medium
+                      text-gray-900 dark:text-white mb-1">
+              {{ unresolvedAlerts
+                 .filter(a => a.type === 'SCORE').length }}
+            </p>
+            <p class="text-xs text-gray-400
+                      dark:text-slate-500">
+              score moyen &lt; 60%
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Chart doughnut alertes -->
+        <div class="bg-white dark:bg-slate-900
+                    rounded-xl p-5 border border-gray-200
+                    dark:border-slate-800 flex flex-col">
+          <div class="flex items-center justify-between
+                      mb-4">
+            <h3 class="text-sm font-medium
+                       text-gray-900 dark:text-white">
+              Répartition alertes
+            </h3>
+          </div>
+          <div class="flex-1 relative min-h-0"
+               style="height: 180px;">
+            <canvas #alertsChart></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Onglets -->
+      <div class="flex items-center gap-1
+                  bg-gray-100 dark:bg-slate-800
+                  rounded-xl p-1 w-fit mb-4">
+        <button
+          (click)="activeTab.set('patients')"
+          class="px-4 py-2 text-sm rounded-lg
+                 transition-all duration-200"
+          [class.bg-white]="activeTab() === 'patients'"
+          [class.dark:bg-slate-900]="activeTab()
+            === 'patients'"
+          [class.text-gray-900]="activeTab() === 'patients'"
+          [class.dark:text-white]="activeTab() === 'patients'"
+          [class.font-medium]="activeTab() === 'patients'"
+          [class.text-gray-500]="activeTab() !== 'patients'"
+          [class.dark:text-slate-400]="activeTab()
+            !== 'patients'">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round"
+                    stroke-linejoin="round" stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857
+                       M17 20H7m10 0v-2c0-.656-.126-1.283
+                       -.356-1.857M7 20H2v-2a3 3 0
+                       015.356-1.857M7 20v-2c0-.656.126
+                       -1.283.356-1.857m0 0a5.002 5.002
+                       0 019.288 0M15 7a3 3 0 11-6 0
+                       3 3 0 016 0z"/>
+            </svg>
+            Mes patients
+            <span class="text-xs px-1.5 py-0.5
+                         rounded-full font-medium"
+                  [class.bg-blue-50]="activeTab()
+                    === 'patients'"
+                  [class.text-blue-600]="activeTab()
+                    === 'patients'"
+                  [class.dark:bg-blue-950]="activeTab()
+                    === 'patients'"
+                  [class.dark:text-blue-400]="activeTab()
+                    === 'patients'"
+                  [class.bg-gray-200]="activeTab()
+                    !== 'patients'"
+                  [class.dark:bg-slate-700]="activeTab()
+                    !== 'patients'"
+                  [class.text-gray-500]="activeTab()
+                    !== 'patients'"
+                  [class.dark:text-slate-400]="activeTab()
+                    !== 'patients'">
+              {{ dashboard()!.totalPatients }}
+            </span>
+          </div>
+        </button>
+        <button
+          (click)="activeTab.set('alerts')"
+          class="px-4 py-2 text-sm rounded-lg
+                 transition-all duration-200"
+          [class.bg-white]="activeTab() === 'alerts'"
+          [class.dark:bg-slate-900]="activeTab() === 'alerts'"
+          [class.text-gray-900]="activeTab() === 'alerts'"
+          [class.dark:text-white]="activeTab() === 'alerts'"
+          [class.font-medium]="activeTab() === 'alerts'"
+          [class.text-gray-500]="activeTab() !== 'alerts'"
+          [class.dark:text-slate-400]="activeTab()
+            !== 'alerts'">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round"
+                    stroke-linejoin="round" stroke-width="2"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032
+                       0 0118 14.158V11a6.002 6.002 0
+                       00-4-5.659V5a2 2 0 10-4 0v.341
+                       C7.67 6.165 6 8.388 6 11v3.159
+                       c0 .538-.214 1.055-.595 1.436L4
+                       17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            Alertes
+            @if (dashboard()!.pendingAlerts > 0) {
+              <span class="text-xs bg-red-50
+                           dark:bg-red-950/50
+                           text-red-600 dark:text-red-400
+                           px-1.5 py-0.5 rounded-full
+                           font-medium">
+                {{ dashboard()!.pendingAlerts }}
+              </span>
+            }
+          </div>
+        </button>
+      </div>
+
+      <!-- ═══ PATIENTS ═══ -->
+      @if (activeTab() === 'patients') {
+        <div class="bg-white dark:bg-slate-900
+                    border border-gray-200
+                    dark:border-slate-800
+                    rounded-xl overflow-hidden">
+
+          <div class="px-5 py-4 border-b border-gray-200
+                      dark:border-slate-800 flex items-center
+                      justify-between gap-4">
+            <div class="relative flex-1 max-w-xs">
+              <svg class="w-4 h-4 text-gray-400
+                          absolute left-3 top-1/2
+                          -translate-y-1/2" fill="none"
+                   viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0
+                         11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              <input type="text"
+                     placeholder="Rechercher un patient..."
+                     (input)="onSearch($event)"
+                     class="w-full pl-9 pr-4 py-2
+                            text-sm bg-gray-50
+                            dark:bg-slate-800 border
+                            border-gray-200
+                            dark:border-slate-700
+                            rounded-lg text-gray-900
+                            dark:text-white
+                            placeholder-gray-400
+                            dark:placeholder-slate-500
+                            outline-none
+                            focus:border-blue-400
+                            transition-colors"/>
+            </div>
+            <span class="text-xs text-gray-400
+                         dark:text-slate-500">
+              {{ filteredPatients.length }} résultat(s)
+            </span>
+          </div>
+
+          @if (filteredPatients.length > 0) {
+
+            <!-- En-tête colonnes -->
+            <div class="px-5 py-2 grid grid-cols-5
+                        gap-4 bg-gray-50 dark:bg-slate-800/50
+                        border-b border-gray-100
+                        dark:border-slate-800">
+              <div class="col-span-2 text-xs font-medium
+                          text-gray-400 dark:text-slate-500
+                          uppercase tracking-wider">
+                Patient
+              </div>
+              <div class="text-xs font-medium text-gray-400
+                          dark:text-slate-500 uppercase
+                          tracking-wider text-center">
+                Streak
+              </div>
+              <div class="text-xs font-medium text-gray-400
+                          dark:text-slate-500 uppercase
+                          tracking-wider text-center">
+                XP
+              </div>
+              <div class="text-xs font-medium text-gray-400
+                          dark:text-slate-500 uppercase
+                          tracking-wider text-right">
+                Niveau
+              </div>
+            </div>
+
+            <div class="divide-y divide-gray-100
+                        dark:divide-slate-800">
+              @for (patient of filteredPatients;
+                    track patient.id) {
+                <div class="px-5 py-3.5 grid grid-cols-5
+                            gap-4 items-center
+                            hover:bg-gray-50
+                            dark:hover:bg-slate-800/50
+                            transition-colors cursor-pointer
+                            group"
+                     (click)="viewPatient(patient.id
+                               .toString())">
+
+                  <div class="col-span-2 flex items-center
+                              gap-3">
+                    <div class="w-9 h-9 rounded-full
+                                bg-gradient-to-br
+                                from-blue-400 to-indigo-600
+                                flex items-center
+                                justify-center text-sm
+                                font-medium text-white
+                                flex-shrink-0">
+                      {{ patient.fullName.charAt(0)
+                         .toUpperCase() }}
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium
+                                text-gray-900 dark:text-white
+                                group-hover:text-blue-600
+                                dark:group-hover:text-blue-400
+                                transition-colors">
+                        {{ patient.fullName }}
+                      </p>
+                      <p class="text-xs text-gray-400
+                                dark:text-slate-500">
+                        {{ patient.pathology }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="text-center">
+                    <span class="text-sm font-medium
+                                 text-gray-700
+                                 dark:text-slate-300">
+                      {{ patient.streakCount }}
+                    </span>
+                    <span class="text-xs text-gray-400
+                                 dark:text-slate-500 ml-1">
+                      j 🔥
+                    </span>
+                  </div>
+
+                  <div class="text-center">
+                    <span class="text-sm font-medium
+                                 text-amber-600
+                                 dark:text-amber-400">
+                      {{ patient.totalXp }}
+                    </span>
+                    <span class="text-xs text-gray-400
+                                 dark:text-slate-500 ml-1">
+                      XP
+                    </span>
+                  </div>
+
+                  <div class="flex items-center
+                              justify-end gap-2">
+                    <span class="text-xs px-2 py-1
+                                 rounded-lg font-medium
+                                 {{ getLevelColor(patient.level) }}">
+                      {{ getLevelLabel(patient.level) }}
+                    </span>
+                    <svg class="w-4 h-4 text-gray-300
+                                dark:text-slate-600
+                                group-hover:text-blue-400
+                                transition-colors"
+                         fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor">
+                      <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 5l7 7-7 7"/>
+                    </svg>
+                  </div>
+
+                </div>
+              }
+            </div>
+
+          } @else {
+            <div class="flex flex-col items-center
+                        justify-center py-16 text-center">
+              <div class="w-12 h-12 bg-gray-100
+                          dark:bg-slate-800 rounded-full
+                          flex items-center justify-center
+                          mb-3">
+                <svg class="w-6 h-6 text-gray-400"
+                     fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0
+                           11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </div>
+              <p class="text-sm font-medium text-gray-600
+                        dark:text-slate-400">
+                Aucun patient trouvé
+              </p>
+              <p class="text-xs text-gray-400
+                        dark:text-slate-500 mt-1">
+                Essayez un autre terme de recherche
+              </p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ═══ ALERTES ═══ -->
+      @if (activeTab() === 'alerts') {
+        <div class="bg-white dark:bg-slate-900
+                    border border-gray-200
+                    dark:border-slate-800
+                    rounded-xl overflow-hidden">
+
+          <div class="px-5 py-4 border-b border-gray-200
+                      dark:border-slate-800 flex items-center
+                      justify-between">
+            <div>
+              <h2 class="text-sm font-medium
+                         text-gray-900 dark:text-white">
+                Alertes non résolues
+              </h2>
+              <p class="text-xs text-gray-400
+                        dark:text-slate-500 mt-0.5">
+                Interventions requises auprès de vos patients
+              </p>
+            </div>
+            @if (unresolvedAlerts.length > 0) {
+              <span class="text-xs bg-red-50
+                           dark:bg-red-950/50
+                           text-red-600 dark:text-red-400
+                           border border-red-200
+                           dark:border-red-900
+                           px-3 py-1 rounded-full
+                           font-medium">
+                {{ unresolvedAlerts.length }} en attente
+              </span>
+            }
+          </div>
+
+          @if (unresolvedAlerts.length > 0) {
+            <div class="divide-y divide-gray-100
+                        dark:divide-slate-800">
+              @for (alert of unresolvedAlerts;
+                    track alert.id) {
+                <div class="px-5 py-4 flex items-start
+                            justify-between gap-4
+                            hover:bg-gray-50
+                            dark:hover:bg-slate-800/30
+                            transition-colors">
+
+                  <div class="flex items-start gap-3
+                              flex-1">
+                    <div class="w-9 h-9 rounded-xl
+                                flex items-center
+                                justify-center flex-shrink-0
+                                mt-0.5"
+                         [class.bg-amber-50]="alert.type
+                           === 'INACTIVITY'"
+                         [class.dark:bg-amber-950]="alert.type
+                           === 'INACTIVITY'"
+                         [class.bg-red-50]="alert.type
+                           === 'SCORE'"
+                         [class.dark:bg-red-950]="alert.type
+                           === 'SCORE'">
+                      @if (alert.type === 'INACTIVITY') {
+                        <svg class="w-5 h-5 text-amber-500"
+                             fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                          <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0
+                                   11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                      } @else {
+                        <svg class="w-5 h-5 text-red-500"
+                             fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                          <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M13 17h8m0 0V9m0 8
+                                   l-8-8-4 4-6-6"/>
+                        </svg>
+                      }
+                    </div>
+                    <div class="flex-1">
+                      <div class="flex items-center
+                                  gap-2 mb-1 flex-wrap">
+                        <p class="text-sm font-medium
+                                  text-gray-900
+                                  dark:text-white">
+                          {{ alert.patientName }}
+                        </p>
+                        <span class="text-xs px-2 py-0.5
+                                     rounded-full border
+                                     font-medium
+                                     {{ getAlertTypeColor(alert.type) }}">
+                          {{ getAlertTypeLabel(alert.type) }}
+                        </span>
+                      </div>
+                      <p class="text-sm text-gray-500
+                                dark:text-slate-400 mb-1">
+                        {{ alert.message }}
+                      </p>
+                      <p class="text-xs text-gray-400
+                                dark:text-slate-500">
+                        {{ alert.sentAt
+                           | date:'dd/MM/yyyy à HH:mm' }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    (click)="resolveAlert(alert.id
+                              .toString())"
+                    class="flex items-center gap-1.5
+                           text-xs font-medium
+                           text-green-700 dark:text-green-400
+                           bg-green-50 dark:bg-green-950/40
+                           border border-green-200
+                           dark:border-green-800
+                           px-3 py-2 rounded-lg
+                           hover:bg-green-100
+                           dark:hover:bg-green-900/40
+                           transition-colors flex-shrink-0">
+                    <svg class="w-3.5 h-3.5" fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                      <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Résoudre
+                  </button>
+
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="flex flex-col items-center
+                        justify-center py-16 text-center">
+              <div class="w-14 h-14 bg-green-50
+                          dark:bg-green-950/30 rounded-full
+                          flex items-center justify-center
+                          mb-4">
+                <svg class="w-7 h-7 text-green-500"
+                     fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0
+                           11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <p class="text-sm font-medium text-gray-700
+                        dark:text-slate-300">
+                Aucune alerte active
+              </p>
+              <p class="text-xs text-gray-400
+                        dark:text-slate-500 mt-1">
+                Tous vos patients progressent correctement
+              </p>
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+  }
+
+</div>

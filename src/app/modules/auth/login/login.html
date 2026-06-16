@@ -1,0 +1,203 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-900
+            via-blue-950 to-slate-900 flex items-center
+            justify-center p-4">
+
+  <!-- Card principale -->
+  <div class="w-full max-w-md">
+
+    <!-- Logo + Titre -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center
+                  w-16 h-16 bg-blue-600 rounded-2xl mb-4
+                  shadow-lg shadow-blue-500/30">
+        <svg class="w-8 h-8 text-white" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12
+                   20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12
+                   7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+      </div>
+      <h1 class="text-3xl font-bold text-white tracking-tight">
+        KINEAI
+      </h1>
+      <p class="text-slate-400 mt-1 text-sm">
+        Plateforme de rééducation intelligente
+      </p>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="bg-slate-800/50 backdrop-blur-sm border
+                border-slate-700/50 rounded-2xl p-8
+                shadow-2xl">
+
+      <h2 class="text-xl font-semibold text-white mb-6">
+        Connexion
+      </h2>
+
+      <!-- Message erreur -->
+      @if (errorMessage) {
+        <div class="flex items-center gap-3 bg-red-500/10
+                    border border-red-500/30 rounded-xl p-4
+                    mb-6">
+          <svg class="w-5 h-5 text-red-400 shrink-0"
+               fill="none" viewBox="0 0 24 24"
+               stroke="currentColor">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0
+                     11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="text-red-400 text-sm">{{ errorMessage }}</p>
+        </div>
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <!-- Email -->
+        <div class="mb-5">
+          <label class="block text-sm font-medium
+                        text-slate-300 mb-2">
+            Adresse email
+          </label>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="votre@email.com"
+            class="w-full bg-slate-700/50 border border-slate-600
+                   text-white placeholder-slate-400 rounded-xl
+                   px-4 py-3 text-sm outline-none transition-all
+                   focus:border-blue-500 focus:ring-2
+                   focus:ring-blue-500/20"
+            [class.border-red-500]="email?.invalid && email?.touched"
+          />
+          @if (email?.invalid && email?.touched) {
+            <p class="text-red-400 text-xs mt-1.5">
+              @if (email?.errors?.['required']) {
+                L'email est obligatoire
+              }
+              @if (email?.errors?.['email']) {
+                Format email invalide
+              }
+            </p>
+          }
+        </div>
+
+        <!-- Mot de passe -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium
+                        text-slate-300 mb-2">
+            Mot de passe
+          </label>
+          <div class="relative">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+              class="w-full bg-slate-700/50 border border-slate-600
+                     text-white placeholder-slate-400 rounded-xl
+                     px-4 py-3 pr-12 text-sm outline-none
+                     transition-all focus:border-blue-500
+                     focus:ring-2 focus:ring-blue-500/20"
+              [class.border-red-500]="password?.invalid
+                                      && password?.touched"
+            />
+            <!-- Toggle password -->
+            <button type="button"
+                    (click)="togglePassword()"
+                    class="absolute right-3 top-1/2 -translate-y-1/2
+                           text-slate-400 hover:text-slate-200
+                           transition-colors">
+              @if (showPassword) {
+                <svg class="w-5 h-5" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2"
+                        d="M13.875 18.825A10.05 10.05 0
+                           0112 19c-4.478 0-8.268-2.943-9.543-7a9.97
+                           9.97 0 011.563-3.029m5.858.908a3 3 0
+                           114.243 4.243M9.878 9.878l4.242
+                           4.242M9.88 9.88l-3.29-3.29m7.532
+                           7.532l3.29 3.29M3 3l3.59 3.59m0
+                           0A9.953 9.953 0 0112 5c4.478 0
+                           8.268 2.943 9.543 7a10.025 10.025
+                           0 01-4.132 4.411m0 0L21 21"/>
+                </svg>
+              } @else {
+                <svg class="w-5 h-5" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016
+                           0z M2.458 12C3.732 7.943 7.523 5
+                           12 5c4.478 0 8.268 2.943 9.542
+                           7-1.274 4.057-5.064 7-9.542
+                           7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+              }
+            </button>
+          </div>
+          @if (password?.invalid && password?.touched) {
+            <p class="text-red-400 text-xs mt-1.5">
+              @if (password?.errors?.['required']) {
+                Le mot de passe est obligatoire
+              }
+              @if (password?.errors?.['minlength']) {
+                Minimum 8 caractères
+              }
+            </p>
+          }
+        </div>
+
+        <!-- Bouton connexion -->
+        <button
+          type="submit"
+          [disabled]="loginForm.invalid || isLoading"
+          class="w-full bg-blue-600 hover:bg-blue-500
+                 disabled:bg-slate-600 disabled:cursor-not-allowed
+                 text-white font-semibold rounded-xl py-3
+                 transition-all duration-200 flex items-center
+                 justify-center gap-2 shadow-lg
+                 shadow-blue-500/20">
+
+          @if (isLoading) {
+            <!-- Spinner -->
+            <svg class="w-5 h-5 animate-spin"
+                 fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12"
+                      r="10" stroke="currentColor"
+                      stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0
+                       5.373 0 12h4z"/>
+            </svg>
+            <span>Connexion en cours...</span>
+          } @else {
+            <span>Se connecter</span>
+          }
+        </button>
+
+      </form>
+
+      <!-- Lien inscription -->
+      <div class="mt-6 text-center">
+        <p class="text-slate-400 text-sm">
+          Pas encore de compte ?
+          <a routerLink="/auth/register"
+             class="text-blue-400 hover:text-blue-300
+                    font-medium transition-colors">
+            S'inscrire
+          </a>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <p class="text-center text-slate-500 text-xs mt-6">
+      © 2025 KINEAI — Tous droits réservés
+    </p>
+
+  </div>
+</div>
