@@ -7,6 +7,7 @@ export interface ExerciseResponse {
   repsTarget: number;
   difficultyLevel: string;
   mediapipeJoints: string;
+  description: string;
 }
 
 export interface CreateSessionRequest {

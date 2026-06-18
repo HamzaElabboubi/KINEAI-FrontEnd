@@ -1,490 +1,452 @@
-<div class="min-h-screen bg-gray-50 dark:bg-slate-950">
+<div class="min-h-screen bg-gray-50 flex">
 
-  <!-- Navbar -->
-  <nav class="bg-white dark:bg-slate-900 border-b
-              border-gray-200 dark:border-slate-800
-              px-6 h-14 flex items-center
-              justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-8 h-8 bg-blue-50 dark:bg-blue-950
-                  rounded-lg flex items-center
-                  justify-center">
-        <svg class="w-4 h-4 text-blue-600" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round"
-                stroke-linejoin="round" stroke-width="2"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12
-                   20.364l7.682-7.682a4.5 4.5 0
-                   00-6.364-6.364L12 7.636l-1.318-1.318
-                   a4.5 4.5 0 00-6.364 0z"/>
+  <app-patient-sidebar></app-patient-sidebar>
+
+  <div class="ml-56 flex-1">
+
+    @if (isLoading()) {
+      <div class="flex items-center justify-center
+                  py-24 gap-3">
+        <svg class="w-5 h-5 animate-spin text-blue-500"
+             fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12"
+                  r="10" stroke="currentColor"
+                  stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0
+                   0 5.373 0 12h4z"/>
         </svg>
       </div>
-      <span class="font-medium text-sm
-                   text-gray-900 dark:text-white">
-        KINEAI
-      </span>
-      <span class="text-xs bg-blue-50 dark:bg-blue-950
-                   text-blue-600 dark:text-blue-400
-                   px-2 py-0.5 rounded-full border
-                   border-blue-100 dark:border-blue-900">
-        Patient
-      </span>
-    </div>
-    <div class="flex items-center gap-3">
-      <div class="flex items-center gap-2">
-        <div class="w-7 h-7 rounded-full bg-blue-50
-                    dark:bg-blue-950 flex items-center
-                    justify-center text-xs font-medium
-                    text-blue-600 dark:text-blue-400">
-          {{ patientName.charAt(0) }}
+    }
+
+    @if (errorMsg()) {
+      <div class="px-8 py-6">
+        <div class="bg-red-50 border border-red-200
+                    rounded-lg p-4 text-sm
+                    text-red-600">
+          {{ errorMsg() }}
         </div>
-        <span class="text-sm text-gray-600
-                     dark:text-slate-400">
-          {{ patientName }}
-        </span>
       </div>
-      <button (click)="logout()"
-              class="text-sm text-red-500
-                     hover:text-red-600 flex items-center
-                     gap-1.5 transition-colors">
-        <svg class="w-4 h-4" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round"
-                stroke-linejoin="round" stroke-width="2"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3
-                   3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0
-                   013-3h4a3 3 0 013 3v1"/>
-        </svg>
-        Déconnexion
-      </button>
-    </div>
-  </nav>
+    }
 
-  <!-- Loading -->
-  @if (isLoading()) {
-    <div class="flex items-center justify-center
-                py-24 gap-3">
-      <svg class="w-5 h-5 animate-spin text-blue-500"
-           fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12"
-                r="10" stroke="currentColor"
-                stroke-width="4"/>
-        <path class="opacity-75" fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0
-                 0 5.373 0 12h4z"/>
-      </svg>
-      <span class="text-sm text-gray-400">
-        Chargement...
-      </span>
-    </div>
-  }
+    @if (!isLoading() && dashboard()) {
+      <div class="px-8 py-6">
 
-  <!-- Erreur -->
-  @if (errorMsg()) {
-    <div class="max-w-4xl mx-auto px-6 py-6">
-      <div class="flex items-center gap-2 bg-red-50
-                  dark:bg-red-950/30 border border-red-200
-                  dark:border-red-800 rounded-lg p-4
-                  text-sm text-red-600 dark:text-red-400">
-        <svg class="w-4 h-4 shrink-0" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round"
-                stroke-linejoin="round" stroke-width="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0
-                   11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        {{ errorMsg() }}
-      </div>
-    </div>
-  }
-
-  <!-- Dashboard -->
-  @if (!isLoading() && dashboard()) {
-    <div class="max-w-5xl mx-auto px-6 py-6">
-
-      <!-- Header -->
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h1 class="text-lg font-medium
-                     text-gray-900 dark:text-white">
-            Bonjour,
-            {{ dashboard()!.profile.fullName }} 👋
-          </h1>
-          <p class="text-sm text-gray-500
-                    dark:text-slate-400 mt-0.5">
-            {{ getPathologyLabel(dashboard()!
-               .profile.pathology) }} —
-            Niveau {{ getLevelLabel(dashboard()!
-               .profile.level) }}
-          </p>
-        </div>
-        <button (click)="startSession()"
-                class="flex items-center gap-2
-                       bg-blue-600 hover:bg-blue-700
-                       text-white text-sm font-medium
-                       px-4 py-2 rounded-lg
-                       transition-colors">
-          <svg class="w-4 h-4" fill="none"
-               viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round"
-                  stroke-linejoin="round" stroke-width="2"
-                  d="M14.752 11.168l-3.197-2.132A1 1 0
-                     00010 9.87v4.263a1 1 0 001.555.832
-                     l3.197-2.132a1 1 0 000-1.664z
-                     M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          Démarrer une séance
-        </button>
-      </div>
-
-      <!-- Stats -->
-      <div class="grid grid-cols-4 gap-3 mb-6">
-
-        <!-- XP -->
-        <div class="bg-white dark:bg-slate-900 rounded-lg
-                    p-4 border border-gray-200
-                    dark:border-slate-800">
-          <div class="flex items-center justify-between
-                      mb-2">
-            <span class="text-xs text-gray-500
-                         dark:text-slate-400">
-              Points XP
-            </span>
-            <span class="text-xs bg-amber-50
-                         dark:bg-amber-950/40
-                         text-amber-600
-                         dark:text-amber-400
-                         px-1.5 py-0.5 rounded-full">
-              XP
-            </span>
-          </div>
-          <p class="text-2xl font-medium
-                    text-gray-900 dark:text-white">
-            {{ dashboard()!.totalXp }}
-          </p>
-        </div>
-
-        <!-- Streak -->
-        <div class="bg-white dark:bg-slate-900 rounded-lg
-                    p-4 border border-gray-200
-                    dark:border-slate-800">
-          <div class="flex items-center justify-between
-                      mb-2">
-            <span class="text-xs text-gray-500
-                         dark:text-slate-400">
-              Streak
-            </span>
-            <span class="text-orange-500">🔥</span>
-          </div>
-          <p class="text-2xl font-medium
-                    text-gray-900 dark:text-white">
-            {{ dashboard()!.streakCount }}
-            <span class="text-sm font-normal
-                         text-gray-400">j</span>
-          </p>
-        </div>
-
-        <!-- Séances -->
-        <div class="bg-white dark:bg-slate-900 rounded-lg
-                    p-4 border border-gray-200
-                    dark:border-slate-800">
-          <div class="flex items-center justify-between
-                      mb-2">
-            <span class="text-xs text-gray-500
-                         dark:text-slate-400">
-              Séances
-            </span>
-            <svg class="w-3.5 h-3.5 text-blue-400"
-                 fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor">
-              <path stroke-linecap="round"
-                    stroke-linejoin="round" stroke-width="2"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0
-                       002 2h10a2 2 0 002-2V7a2 2 0
-                       00-2-2h-2M9 5a2 2 0 002 2h2a2 2
-                       0 002-2M9 5a2 2 0 012-2h2a2 2 0
-                       012 2"/>
-            </svg>
-          </div>
-          <p class="text-2xl font-medium
-                    text-gray-900 dark:text-white">
-            {{ dashboard()!.totalSessions }}
-          </p>
-        </div>
-
-        <!-- Score moyen -->
-        <div class="bg-white dark:bg-slate-900 rounded-lg
-                    p-4 border border-gray-200
-                    dark:border-slate-800">
-          <div class="flex items-center justify-between
-                      mb-2">
-            <span class="text-xs text-gray-500
-                         dark:text-slate-400">
-              Score moyen
-            </span>
-            <svg class="w-3.5 h-3.5 text-green-400"
-                 fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor">
-              <path stroke-linecap="round"
-                    stroke-linejoin="round" stroke-width="2"
-                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-            </svg>
-          </div>
-          <p class="text-2xl font-medium
-                    text-gray-900 dark:text-white">
-            {{ dashboard()!.averageScore
-               ? (dashboard()!.averageScore | number:'1.0-0')
-               : '—' }}
-            @if (dashboard()!.averageScore) {
-              <span class="text-sm font-normal
-                           text-gray-400">%</span>
-            }
-          </p>
-        </div>
-
-      </div>
-
-      <div class="grid grid-cols-3 gap-4 mb-4">
-
-        <!-- Plan actif -->
-        <div class="col-span-2 bg-white dark:bg-slate-900
-                    border border-gray-200
-                    dark:border-slate-800 rounded-lg
-                    overflow-hidden">
-          <div class="px-5 py-3 border-b border-gray-200
-                      dark:border-slate-800">
-            <h2 class="text-sm font-medium
-                       text-gray-900 dark:text-white">
-              Plan de rééducation
-            </h2>
+        <!-- Header -->
+        <div class="flex items-start justify-between
+                    mb-6">
+          <div>
+            <p class="text-gray-400 text-sm">Bonjour,</p>
+            <h1 class="text-2xl font-bold text-gray-900
+                       flex items-center gap-2">
+              {{ dashboard()!.profile.fullName }} 👋
+            </h1>
+            <p class="text-sm text-gray-400 mt-1">
+              Bonne reprise ! Continuez vos efforts.
+            </p>
+            <div class="flex items-center gap-2 mt-3">
+              <span class="text-xs bg-gray-100
+                           text-gray-600 px-3 py-1
+                           rounded-full">
+                Pathologie :
+                {{ getPathologyLabel(
+                   dashboard()!.profile.pathology) }}
+              </span>
+              <span class="text-xs bg-blue-50
+                           text-blue-600 px-3 py-1
+                           rounded-full">
+                Niveau :
+                {{ getLevelLabel(
+                   dashboard()!.profile.level) }}
+              </span>
+            </div>
           </div>
 
-          @if (dashboard()!.activePlan) {
-            <div class="p-5">
+          <div class="flex items-center gap-4">
+            <button class="relative">
+              <svg class="w-5 h-5 text-gray-400"
+                   fill="none" viewBox="0 0 24 24"
+                   stroke="currentColor">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 17h5l-1.405-1.405A2.032
+                         2.032 0 0118 14.158V11a6.002
+                         6.002 0 00-4-5.659V5a2 2 0
+                         10-4 0v.341C7.67 6.165 6
+                         8.388 6 11v3.159c0 .538-.214
+                         1.055-.595 1.436L4 17h5m6
+                         0v1a3 3 0 11-6 0v-1m6 0H9"/>
+              </svg>
+            </button>
+            <div class="w-9 h-9 rounded-full
+                        bg-blue-600 text-white text-xs
+                        font-bold flex items-center
+                        justify-center">
+              {{ dashboard()!.profile.fullName
+                 .charAt(0) }}
+            </div>
+            <button (click)="startSession()"
+                    class="flex items-center gap-2
+                           bg-blue-600 hover:bg-blue-700
+                           text-white text-sm font-medium
+                           px-4 py-2.5 rounded-xl
+                           transition-colors">
+              <svg class="w-4 h-4" fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M14.752 11.168l-3.197-2.132
+                         A1 1 0 00010 9.87v4.263a1
+                         1 0 001.555.832l3.197-2.132
+                         a1 1 0 000-1.664zM21 12a9 9
+                         0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Démarrer une séance
+            </button>
+          </div>
+        </div>
 
-              <!-- Progression -->
-              <div class="flex items-center
-                          justify-between mb-3">
-                <span class="text-xs text-gray-500
-                             dark:text-slate-400">
-                  Progression vers la guérison
-                </span>
-                <span class="text-sm font-medium
-                             text-blue-600
-                             dark:text-blue-400">
-                  {{ dashboard()!.progressionPct }}%
-                </span>
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-4 gap-4 mb-6">
+
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-5">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-amber-400">⭐</span>
+              <span class="text-sm text-gray-500">
+                Points XP
+              </span>
+            </div>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ dashboard()!.totalXp }}
+            </p>
+            <p class="text-xs text-green-500 mt-1">
+              Total accumulé
+            </p>
+          </div>
+
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-5">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-orange-400">🔥</span>
+              <span class="text-sm text-gray-500">
+                Streak
+              </span>
+            </div>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ dashboard()!.streakCount }}
+            </p>
+            <p class="text-xs text-orange-500 mt-1">
+              jours consécutifs
+            </p>
+          </div>
+
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-5">
+            <div class="flex items-center gap-2 mb-3">
+              <svg class="w-4 h-4 text-blue-400"
+                   fill="none" viewBox="0 0 24 24"
+                   stroke="currentColor">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14
+                         a2 2 0 002-2V7a2 2 0 00-2-2H5
+                         a2 2 0 00-2 2v12a2 2 0
+                         002 2z"/>
+              </svg>
+              <span class="text-sm text-gray-500">
+                Séances réalisées
+              </span>
+            </div>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ dashboard()!.totalSessions }}
+            </p>
+            <p class="text-xs text-blue-500 mt-1">
+              Total complétées
+            </p>
+          </div>
+
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-5">
+            <div class="flex items-center gap-2 mb-3">
+              <svg class="w-4 h-4 text-green-400"
+                   fill="none" viewBox="0 0 24 24"
+                   stroke="currentColor">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0
+                         11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-sm text-gray-500">
+                Score moyen
+              </span>
+            </div>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ dashboard()!.averageScore
+                 ? (dashboard()!.averageScore
+                    | number:'1.0-0') : 0 }}%
+            </p>
+            <p class="text-xs text-green-500 mt-1">
+              Conformité moyenne
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Graphique + Activité -->
+        <div class="grid grid-cols-3 gap-4 mb-4">
+
+          <div class="col-span-2 bg-white border
+                      border-gray-100 rounded-2xl p-5">
+            <div class="flex items-center justify-between
+                        mb-4">
+              <h3 class="text-sm font-semibold
+                         text-gray-900">
+                Progression globale
+              </h3>
+              <span class="text-xs text-gray-400
+                           bg-gray-50 px-3 py-1
+                           rounded-lg">
+                7 derniers jours
+              </span>
+            </div>
+            <div style="height: 220px;">
+              <canvas #progressChart></canvas>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 mt-4
+                        pt-4 border-t border-gray-50">
+              <div>
+                <p class="text-xs text-gray-400">
+                  Précision
+                </p>
+                <p class="text-sm font-semibold
+                          text-gray-800">
+                  {{ dashboard()!.averageScore
+                     | number:'1.0-0' }}%
+                </p>
               </div>
-              <div class="w-full bg-gray-100
-                          dark:bg-slate-800 rounded-full
-                          h-2 mb-4">
-                <div class="bg-blue-500 h-2 rounded-full
-                            transition-all duration-500"
-                     [style.width.%]="dashboard()!
-                       .progressionPct">
-                </div>
+              <div>
+                <p class="text-xs text-gray-400">
+                  Séances
+                </p>
+                <p class="text-sm font-semibold
+                          text-gray-800">
+                  {{ dashboard()!.totalSessions }}
+                </p>
               </div>
-
-              <!-- Détails plan -->
-              <div class="grid grid-cols-3 gap-3">
-                <div class="bg-gray-50 dark:bg-slate-800
-                            rounded-lg p-3">
-                  <p class="text-xs text-gray-400
-                            dark:text-slate-500 mb-1">
-                    Niveau
-                  </p>
-                  <p class="text-sm font-medium
-                            text-gray-700 dark:text-slate-300">
-                    {{ getLevelLabel(dashboard()!
-                       .activePlan.difficultyLevel) }}
-                  </p>
-                </div>
-                <div class="bg-gray-50 dark:bg-slate-800
-                            rounded-lg p-3">
-                  <p class="text-xs text-gray-400
-                            dark:text-slate-500 mb-1">
-                    Semaine
-                  </p>
-                  <p class="text-sm font-medium
-                            text-gray-700 dark:text-slate-300">
-                    {{ dashboard()!.activePlan.currentWeek }}
-                    / 4
-                  </p>
-                </div>
-                <div class="bg-gray-50 dark:bg-slate-800
-                            rounded-lg p-3">
-                  <p class="text-xs text-gray-400
-                            dark:text-slate-500 mb-1">
-                    Fin du plan
-                  </p>
-                  <p class="text-sm font-medium
-                            text-gray-700 dark:text-slate-300">
-                    {{ dashboard()!.activePlan.endDate
-                       | date:'dd/MM/yyyy' }}
-                  </p>
-                </div>
+              <div>
+                <p class="text-xs text-gray-400">
+                  Niveau actuel
+                </p>
+                <p class="text-sm font-semibold
+                          text-gray-800">
+                  {{ getLevelLabel(
+                     dashboard()!.profile.level) }}
+                </p>
               </div>
             </div>
-          } @else {
-            <div class="flex flex-col items-center
-                        justify-center py-8 text-center">
-              <p class="text-sm text-gray-400
-                        dark:text-slate-500">
-                Aucun plan actif
-              </p>
-              <p class="text-xs text-gray-400
-                        dark:text-slate-600 mt-1">
-                Contactez votre kinésithérapeute
-              </p>
-            </div>
-          }
-        </div>
-
-        <!-- Badges -->
-        <div class="bg-white dark:bg-slate-900
-                    border border-gray-200
-                    dark:border-slate-800 rounded-lg
-                    overflow-hidden">
-          <div class="px-5 py-3 border-b border-gray-200
-                      dark:border-slate-800 flex items-center
-                      justify-between">
-            <h2 class="text-sm font-medium
-                       text-gray-900 dark:text-white">
-              Badges
-            </h2>
-            <span class="text-xs text-gray-400
-                         dark:text-slate-500">
-              {{ dashboard()!.badges.length || 0 }} / 6
-            </span>
           </div>
 
-          <div class="p-4">
-            @if (dashboard()!.badges.length > 0) {
-              <div class="flex flex-col gap-2">
-                @for (badge of dashboard()!.badges;
-                      track badge.id) {
-                  <div class="flex items-center gap-2
-                              bg-amber-50
-                              dark:bg-amber-950/30
-                              border border-amber-100
-                              dark:border-amber-900/50
-                              rounded-lg px-3 py-2">
-                    <span class="text-base">🏅</span>
-                    <div>
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-5">
+            <div class="flex items-center justify-between
+                        mb-4">
+              <h3 class="text-sm font-semibold
+                         text-gray-900">
+                Activité récente
+              </h3>
+            </div>
+
+            @if (dashboard()!.recentSessions.length
+                 > 0) {
+              <div class="flex flex-col gap-3">
+                @for (s of dashboard()!.recentSessions
+                      .slice(0,4); track s.id) {
+                  <div class="flex items-center gap-3">
+                    <div class="w-7 h-7 rounded-full
+                                flex items-center
+                                justify-center
+                                flex-shrink-0"
+                         [class.bg-green-50]="s
+                           .sessionStatus
+                           === 'COMPLETED'"
+                         [class.bg-red-50]="s
+                           .sessionStatus
+                           === 'INTERRUPTED'">
+                      <svg class="w-3.5 h-3.5"
+                           [class.text-green-500]="s
+                             .sessionStatus
+                             === 'COMPLETED'"
+                           [class.text-red-500]="s
+                             .sessionStatus
+                             === 'INTERRUPTED'"
+                           fill="none"
+                           viewBox="0 0 24 24"
+                           stroke="currentColor">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M5 13l4 4L19 7"/>
+                      </svg>
+                    </div>
+                    <div class="flex-1">
                       <p class="text-xs font-medium
-                                text-amber-700
-                                dark:text-amber-400">
-                        {{ getBadgeLabel(badge.badgeType) }}
+                                text-gray-800">
+                        {{ getStatusLabel(
+                           s.sessionStatus) }}
                       </p>
-                      <p class="text-xs text-amber-500
-                                dark:text-amber-600">
-                        {{ badge.unlockedAt
-                           | date:'dd/MM/yyyy' }}
+                      <p class="text-xs text-gray-400">
+                        Score : {{ s.score
+                          | number:'1.0-0' }}%
                       </p>
                     </div>
+                    <span class="text-xs text-gray-400
+                                 flex-shrink-0">
+                      {{ s.startTime | date:'HH:mm' }}
+                    </span>
                   </div>
                 }
               </div>
             } @else {
-              <div class="flex flex-col items-center
-                          justify-center py-6 text-center">
-                <span class="text-2xl mb-2">🔒</span>
-                <p class="text-xs text-gray-400
-                          dark:text-slate-500">
-                  Complétez des séances pour débloquer
-                  des badges
-                </p>
-              </div>
+              <p class="text-xs text-gray-400 text-center
+                        py-6">
+                Aucune activité récente
+              </p>
             }
           </div>
+
         </div>
 
-      </div>
+        <!-- Donut + Plan actif -->
+        <div class="grid grid-cols-3 gap-4">
 
-      <!-- Séances récentes -->
-      <div class="bg-white dark:bg-slate-900
-                  border border-gray-200
-                  dark:border-slate-800 rounded-lg
-                  overflow-hidden">
-        <div class="px-5 py-3 border-b border-gray-200
-                    dark:border-slate-800">
-          <h2 class="text-sm font-medium
-                     text-gray-900 dark:text-white">
-            Séances récentes
-          </h2>
-        </div>
-
-        @if (dashboard()!.recentSessions.length > 0) {
-          <div class="divide-y divide-gray-100
-                      dark:divide-slate-800">
-            @for (session of dashboard()!.recentSessions;
-                  track session.id) {
-              <div class="px-5 py-3 flex items-center
-                          justify-between">
-                <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg
-                              bg-blue-50 dark:bg-blue-950
-                              flex items-center
-                              justify-center">
-                    <svg class="w-4 h-4 text-blue-500"
-                         fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor">
-                      <path stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <p class="text-sm text-gray-700
-                              dark:text-slate-300">
-                      {{ session.startTime
-                         | date:'dd/MM/yyyy HH:mm' }}
-                    </p>
-                    <p class="text-xs text-gray-400
-                              dark:text-slate-500">
-                      {{ session.repsCompleted }}
-                      répétitions · +{{ session.xpEarned }}
-                      XP
-                    </p>
-                  </div>
-                </div>
-                <div class="flex items-center gap-3">
-                  @if (session.score) {
-                    <span class="text-sm font-medium
-                                 text-gray-700
-                                 dark:text-slate-300">
-                      {{ session.score | number:'1.0-0' }}%
-                    </span>
-                  }
-                  <span class="text-xs px-2 py-0.5
-                               rounded-full
-                               {{ getStatusColor(session
-                                  .sessionStatus) }}">
-                    {{ getStatusLabel(session.sessionStatus) }}
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-5">
+            <h3 class="text-sm font-semibold
+                       text-gray-900 mb-4">
+              Indicateurs physiques
+            </h3>
+            <div class="flex items-center gap-5">
+              <div class="relative flex-shrink-0"
+                   style="width: 110px; height: 110px;">
+                <canvas #skillsChart></canvas>
+                <div class="absolute inset-0 flex
+                            flex-col items-center
+                            justify-center">
+                  <span class="text-xl font-bold
+                               text-gray-900">
+                    {{ dashboard()!.averageScore
+                       | number:'1.0-0' }}%
+                  </span>
+                  <span class="text-xs text-gray-400">
+                    Score moyen
                   </span>
                 </div>
               </div>
+              <div class="flex flex-col gap-2 text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full
+                               bg-blue-500"></span>
+                  <span class="text-gray-500">
+                    Mobilité
+                  </span>
+                  <span class="font-medium
+                               text-gray-800">90%</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full
+                               bg-green-500"></span>
+                  <span class="text-gray-500">
+                    Force
+                  </span>
+                  <span class="font-medium
+                               text-gray-800">80%</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full
+                               bg-amber-500"></span>
+                  <span class="text-gray-500">
+                    Endurance
+                  </span>
+                  <span class="font-medium
+                               text-gray-800">85%</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full
+                               bg-purple-500"></span>
+                  <span class="text-gray-500">
+                    Précision
+                  </span>
+                  <span class="font-medium
+                               text-gray-800">85%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-span-2 bg-white border
+                      border-gray-100 rounded-2xl p-5">
+            <div class="flex items-center justify-between
+                        mb-3">
+              <h3 class="text-sm font-semibold
+                         text-gray-900">
+                Plan de rééducation actuel
+              </h3>
+            </div>
+
+            @if (dashboard()!.activePlan) {
+              <div class="bg-blue-50 rounded-xl p-4
+                          flex items-center gap-4">
+                <div class="w-10 h-10 bg-white rounded-lg
+                            flex items-center
+                            justify-center flex-shrink-0">
+                  🎯
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold
+                            text-gray-900">
+                    Semaine
+                    {{ dashboard()!.activePlan
+                       .currentWeek }} / 4
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    Fin du plan :
+                    {{ dashboard()!.activePlan.endDate
+                       | date:'dd/MM/yyyy' }}
+                  </p>
+                  <div class="w-full bg-white
+                              rounded-full h-1.5 mt-2">
+                    <div class="bg-blue-600 h-1.5
+                                rounded-full"
+                         [style.width.%]="
+                           dashboard()!.progressionPct">
+                    </div>
+                  </div>
+                </div>
+                <span class="text-sm font-bold
+                             text-blue-600 flex-shrink-0">
+                  {{ dashboard()!.progressionPct }}%
+                </span>
+              </div>
+            } @else {
+              <p class="text-xs text-gray-400 text-center
+                        py-6">
+                Aucun plan actif — contactez votre
+                kinésithérapeute
+              </p>
             }
           </div>
-        } @else {
-          <div class="flex flex-col items-center
-                      justify-center py-10 text-center">
-            <p class="text-sm text-gray-400
-                      dark:text-slate-500">
-              Aucune séance effectuée
-            </p>
-            <button (click)="startSession()"
-                    class="mt-3 text-xs text-blue-600
-                           dark:text-blue-400
-                           hover:underline">
-              Démarrer votre première séance
-            </button>
-          </div>
-        }
+
+        </div>
+
       </div>
+    }
 
-    </div>
-  }
-
+  </div>
 </div>

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { DashboardPatientResponse }
+import { DashboardPatientResponse, PatientResponse }
   from '../models/patient.model';
 
 @Injectable({
@@ -18,4 +18,9 @@ export class PatientService {
     return this.http.get<DashboardPatientResponse>(
       `${this.API}/dashboard/patient`);
   }
+  // ── Mon profil complet ─────────────────────
+getMyProfile(): Observable<PatientResponse> {
+  return this.http.get<PatientResponse>(
+    `${this.API}/patient/profile`);
+}
 }

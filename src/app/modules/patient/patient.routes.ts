@@ -7,11 +7,29 @@ export const patientRoutes: Routes = [
       import('./dashboard/dashboard.component')
         .then(c => c.DashboardComponent)
   },
-      {
+  {
     path: 'session',
     loadComponent: () =>
-      import('./session/session')
+      import('./session/session.component')
         .then(c => c.SessionComponent)
+  },
+ /* {
+    path: 'progress',
+    loadComponent: () =>
+      import('./progress/progress.component')
+        .then(c => c.ProgressComponent)
+  },
+  {
+    path: 'messages',
+    loadComponent: () =>
+      import('./messages/messages.component')
+        .then(c => c.MessagesComponent)
+  },*/
+  {
+    path: 'profile',
+    loadComponent: () =>
+      import('./profile/profile.component')
+        .then(c => c.ProfileComponent)
   },
   {
     path: '',
