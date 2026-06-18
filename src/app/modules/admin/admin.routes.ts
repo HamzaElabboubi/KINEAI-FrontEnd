@@ -7,6 +7,18 @@ export const adminRoutes: Routes = [
       import('./dashboard/dashboard.component')
         .then(c => c.DashboardComponent)
   },
+   {
+    path: 'kines',
+    loadComponent: () =>
+      import('./kines/kines.component')
+        .then(c => c.KinesComponent)
+  },
+  {
+    path: 'patients',
+    loadComponent: () =>
+      import('./patients/patients.component')
+        .then(c => c.PatientsComponent)
+  },
   {
     path: '',
     redirectTo: 'dashboard',

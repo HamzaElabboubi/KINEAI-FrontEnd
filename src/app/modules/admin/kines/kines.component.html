@@ -1,0 +1,318 @@
+<div class="min-h-screen bg-gray-50 flex">
+
+  <app-admin-sidebar
+    [pendingCount]="pendingCount">
+  </app-admin-sidebar>
+
+  <div class="ml-56 flex-1 px-8 py-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between
+                mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">
+          Kinésithérapeutes
+        </h1>
+        <p class="text-sm text-gray-400 mt-1">
+          Gérez les comptes kinésithérapeutes
+          de la plateforme
+        </p>
+      </div>
+      <span class="text-sm bg-blue-50 text-blue-600
+                   px-3 py-1.5 rounded-full font-medium">
+        {{ allKines().length }} kinés au total
+      </span>
+    </div>
+
+    <!-- Messages -->
+    @if (successMsg()) {
+      <div class="flex items-center gap-2 bg-green-50
+                  border border-green-200 rounded-xl
+                  p-3 mb-4 text-sm text-green-700">
+        {{ successMsg() }}
+      </div>
+    }
+    @if (errorMsg()) {
+      <div class="flex items-center gap-2 bg-red-50
+                  border border-red-200 rounded-xl
+                  p-3 mb-4 text-sm text-red-600">
+        {{ errorMsg() }}
+      </div>
+    }
+
+    <!-- Onglets + Recherche -->
+    <div class="flex items-center justify-between
+                mb-4">
+      <div class="flex items-center gap-1 bg-white
+                  border border-gray-100 rounded-xl
+                  p-1 w-fit">
+        <button (click)="setTab('ALL')"
+                class="px-4 py-1.5 text-sm rounded-lg
+                       transition-all"
+                [class.bg-blue-50]="activeTab()==='ALL'"
+                [class.text-blue-700]="activeTab()==='ALL'"
+                [class.font-medium]="activeTab()==='ALL'"
+                [class.text-gray-500]="activeTab()!=='ALL'">
+          Tous
+        </button>
+        <button (click)="setTab('VALIDATED')"
+                class="px-4 py-1.5 text-sm rounded-lg
+                       transition-all"
+                [class.bg-blue-50]="activeTab()==='VALIDATED'"
+                [class.text-blue-700]="activeTab()==='VALIDATED'"
+                [class.font-medium]="activeTab()==='VALIDATED'"
+                [class.text-gray-500]="activeTab()!=='VALIDATED'">
+          Validés
+        </button>
+        <button (click)="setTab('PENDING')"
+                class="px-4 py-1.5 text-sm rounded-lg
+                       transition-all"
+                [class.bg-blue-50]="activeTab()==='PENDING'"
+                [class.text-blue-700]="activeTab()==='PENDING'"
+                [class.font-medium]="activeTab()==='PENDING'"
+                [class.text-gray-500]="activeTab()!=='PENDING'">
+          En attente
+          @if (pendingCount > 0) {
+            <span class="ml-1.5 text-xs bg-red-500
+                         text-white px-1.5 py-0.5
+                         rounded-full">
+              {{ pendingCount }}
+            </span>
+          }
+        </button>
+      </div>
+
+      <div class="relative w-72">
+        <svg class="w-4 h-4 text-gray-400 absolute
+                    left-3 top-1/2 -translate-y-1/2"
+             fill="none" viewBox="0 0 24 24"
+             stroke="currentColor">
+          <path stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0
+                   7 7 0 0114 0z"/>
+        </svg>
+        <input type="text"
+               placeholder="Rechercher un kiné..."
+               (input)="onSearch($event)"
+               class="w-full pl-9 pr-4 py-2 text-sm
+                      bg-white border border-gray-200
+                      rounded-xl text-gray-900
+                      placeholder-gray-400 outline-none
+                      focus:border-blue-400
+                      transition-colors"/>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white border border-gray-100
+                rounded-2xl overflow-hidden">
+
+      @if (isLoading()) {
+        <div class="flex justify-center py-16">
+          <svg class="w-5 h-5 animate-spin text-blue-500"
+               fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12"
+                    r="10" stroke="currentColor"
+                    stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0
+                     0 5.373 0 12h4z"/>
+          </svg>
+        </div>
+      }
+
+      @if (!isLoading() && filteredKines().length === 0) {
+        <div class="flex flex-col items-center
+                    justify-center py-16 text-center">
+          <p class="text-sm text-gray-500">
+            Aucun kinésithérapeute trouvé
+          </p>
+        </div>
+      }
+
+      @if (!isLoading() && filteredKines().length > 0) {
+
+        <!-- En-tête colonnes -->
+        <div class="px-5 py-2.5 grid grid-cols-6 gap-4
+                    bg-gray-50 border-b border-gray-100">
+          <div class="col-span-2 text-xs font-medium
+                      text-gray-400 uppercase
+                      tracking-wider">
+            Kinésithérapeute
+          </div>
+          <div class="text-xs font-medium text-gray-400
+                      uppercase tracking-wider">
+            Spécialité
+          </div>
+          <div class="text-xs font-medium text-gray-400
+                      uppercase tracking-wider text-center">
+            Patients
+          </div>
+          <div class="text-xs font-medium text-gray-400
+                      uppercase tracking-wider text-center">
+            Statut
+          </div>
+          <div class="text-xs font-medium text-gray-400
+                      uppercase tracking-wider text-right">
+            Actions
+          </div>
+        </div>
+
+        <div class="divide-y divide-gray-50">
+          @for (kine of filteredKines(); track kine.id) {
+            <div class="px-5 py-3.5 grid grid-cols-6
+                        gap-4 items-center
+                        hover:bg-gray-50/50
+                        transition-colors">
+
+              <div class="col-span-2 flex items-center
+                          gap-3">
+                <div class="w-9 h-9 rounded-full
+                            bg-gradient-to-br
+                            from-blue-400 to-indigo-600
+                            flex items-center
+                            justify-center text-sm
+                            font-medium text-white
+                            flex-shrink-0">
+                  {{ kine.fullName.charAt(0)
+                     .toUpperCase() }}
+                </div>
+                <div>
+                  <p class="text-sm font-medium
+                            text-gray-900">
+                    Dr. {{ kine.fullName }}
+                  </p>
+                  <p class="text-xs text-gray-400">
+                    {{ kine.email }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="text-sm text-gray-600">
+                {{ kine.speciality }}
+              </div>
+
+              <div class="text-center text-sm font-medium
+                          text-gray-700">
+                {{ kine.patientCount }}
+              </div>
+
+              <div class="text-center">
+                @if (kine.validated) {
+                  <span class="text-xs bg-green-50
+                               text-green-600 px-2.5
+                               py-1 rounded-full
+                               font-medium">
+                    Validé
+                  </span>
+                } @else {
+                  <span class="text-xs bg-amber-50
+                               text-amber-600 px-2.5
+                               py-1 rounded-full
+                               font-medium">
+                    En attente
+                  </span>
+                }
+              </div>
+
+              <div class="flex items-center
+                          justify-end gap-2">
+                @if (!kine.validated) {
+                  <button
+                    (click)="validateKine(kine.id,
+                              kine.fullName)"
+                    class="text-xs font-medium
+                           text-green-600 border
+                           border-green-200 bg-green-50
+                           px-2.5 py-1.5 rounded-lg
+                           hover:bg-green-100
+                           transition-colors">
+                    Valider
+                  </button>
+                  <button
+                    (click)="rejectKine(kine.id,
+                              kine.fullName)"
+                    class="text-xs font-medium
+                           text-amber-600 border
+                           border-amber-200 bg-amber-50
+                           px-2.5 py-1.5 rounded-lg
+                           hover:bg-amber-100
+                           transition-colors">
+                    Rejeter
+                  </button>
+                } @else {
+                  <button
+                    (click)="askDelete(kine.id)"
+                    class="text-xs font-medium
+                           text-red-500 border
+                           border-red-200 bg-red-50
+                           px-2.5 py-1.5 rounded-lg
+                           hover:bg-red-100
+                           transition-colors">
+                    Supprimer
+                  </button>
+                }
+              </div>
+
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+  </div>
+
+  <!-- Modale confirmation suppression -->
+  @if (confirmDeleteId()) {
+    <div class="fixed inset-0 bg-black/40
+                flex items-center justify-center
+                z-50 px-4">
+      <div class="bg-white rounded-2xl p-6
+                  max-w-sm w-full">
+        <div class="w-10 h-10 bg-red-50 rounded-full
+                    flex items-center justify-center
+                    mb-3">
+          <svg class="w-5 h-5 text-red-500" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856
+                     c1.54 0 2.502-1.667 1.732-3L13.732
+                     4c-.77-1.333-2.694-1.333-3.464
+                     0L3.34 16c-.77 1.333.192 3
+                     1.732 3z"/>
+          </svg>
+        </div>
+        <h3 class="text-base font-semibold
+                   text-gray-900 mb-1">
+          Supprimer ce kinésithérapeute ?
+        </h3>
+        <p class="text-sm text-gray-500 mb-5">
+          Cette action est irréversible. Le compte
+          sera définitivement supprimé. Cette
+          opération échouera si le kiné a encore
+          des patients assignés.
+        </p>
+        <div class="flex items-center gap-3">
+          <button (click)="cancelDelete()"
+                  class="flex-1 px-4 py-2 text-sm
+                         text-gray-600 border
+                         border-gray-200 rounded-xl
+                         hover:bg-gray-50
+                         transition-colors">
+            Annuler
+          </button>
+          <button (click)="confirmDelete('ce kiné')"
+                  class="flex-1 px-4 py-2 text-sm
+                         font-medium text-white
+                         bg-red-600 hover:bg-red-700
+                         rounded-xl transition-colors">
+            Supprimer
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>
