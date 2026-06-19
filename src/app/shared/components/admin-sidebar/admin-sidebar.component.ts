@@ -4,14 +4,16 @@ import { RouterLink, RouterLinkActive }
 import { AuthService }
   from '../../../core/services/auth.service';
 
+
 @Component({
   selector: 'app-admin-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, ],
   templateUrl: './admin-sidebar.component.html'
 })
 export class AdminSidebarComponent {
   private authService = inject(AuthService);
+  readonly logoUrl = 'assets/images/logo.png';
 
   // Badge sur "Validations" — passé par le parent
   pendingCount = input<number>(0);

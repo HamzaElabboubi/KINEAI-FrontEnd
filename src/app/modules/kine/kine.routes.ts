@@ -10,8 +10,8 @@ export const kineRoutes: Routes = [
   {
     path: 'patients',
     loadComponent: () =>
-      import('../patients/patients.component')
-        .then(c => c.PatientsComponent)
+      import('../my_patients/my_patients.component')
+        .then(c => c.my_PatientComponent)
   },
   {
     path: '',

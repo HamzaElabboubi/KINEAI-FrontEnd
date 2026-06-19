@@ -183,15 +183,24 @@ export class SessionComponent
   // ══════════════════════════════════════════
   // ✅ Après — exercices filtrés par pathologie + niveau
 loadExercises(): void {
-    this.exerciseService.getMyExercises().subscribe({
-        next: (exs: ExerciseResponse[]) => {
-            this.exercises.set(exs);
-        },
-        error: () => {
-            this.errorMsg.set(
-                'Aucun plan actif — contactez votre kinésithérapeute');
-        }
-    });
+  this.exerciseService.getMyExercises().subscribe({
+    next: (exs: ExerciseResponse[]) => {
+      this.exercises.set(exs);
+      if (exs.length === 0) {
+        this.errorMsg.set(
+          'Aucun exercice disponible pour le moment.'
+          + ' Contactez votre kinésithérapeute.');
+      }
+    },
+    error: (err: { error?: { message?: string } }) => {
+      // ✅ Le backend renvoie maintenant un message
+      // clair si aucun plan actif n'existe
+      this.errorMsg.set(
+        err.error?.message
+        || 'Impossible de charger vos exercices.'
+           + ' Contactez votre kinésithérapeute.');
+    }
+  });
 }
 
   selectExercise(ex: ExerciseResponse): void {

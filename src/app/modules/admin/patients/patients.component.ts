@@ -2,17 +2,18 @@ import {
   Component, inject, OnInit, signal, computed
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AdminService }
+import { AdminService, KineResponse }
   from '../../../core/services/admin.service';
 import { PatientResponse }
   from '../../../core/models/patient.model';
 import { AdminSidebarComponent }
   from '../../../shared/components/admin-sidebar/admin-sidebar.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [CommonModule, AdminSidebarComponent],
+  imports: [CommonModule, AdminSidebarComponent,FormsModule],
   templateUrl: './patients.component.html',
   styleUrl: './patients.component.scss'
 })
@@ -137,4 +138,53 @@ export class PatientsComponent implements OnInit {
     };
     return labels[p] || p;
   }
+
+  // Nouveaux signals
+reassignTarget = signal<PatientResponse | null>(null);
+availableKines = signal<KineResponse[]>([]);
+selectedKineId = signal<string>('');
+
+openReassign(patient: PatientResponse): void {
+  this.reassignTarget.set(patient);
+  this.selectedKineId.set('');
+
+  // Charger les kinés validés disponibles
+  this.adminService.getAllKines().subscribe({
+    next: (kines: KineResponse[]) => {
+      this.availableKines.set(
+        kines.filter(k => k.validated
+          && k.id !== patient.kineId));
+    }
+  });
+}
+
+cancelReassign(): void {
+  this.reassignTarget.set(null);
+}
+
+confirmReassign(): void {
+  const patient = this.reassignTarget();
+  const newKineId = this.selectedKineId();
+  if (!patient || !newKineId) return;
+
+  this.adminService.reassignKine(
+    patient.id, newKineId
+  ).subscribe({
+    next: (updated: PatientResponse) => {
+      this.allPatients.update(list =>
+        list.map(p => p.id === patient.id
+          ? updated : p));
+      this.successMsg.set(
+        `${patient.fullName} réaffecté avec succès`);
+      this.reassignTarget.set(null);
+      setTimeout(() => this.successMsg.set(''), 3000);
+    },
+    error: (err: { error?: { message?: string } }) => {
+      this.errorMsg.set(
+        err.error?.message
+        || 'Erreur lors de la réaffectation');
+      this.reassignTarget.set(null);
+    }
+  });
+}
 }

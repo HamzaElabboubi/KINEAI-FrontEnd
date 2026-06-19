@@ -13,13 +13,13 @@ export const patientRoutes: Routes = [
       import('./session/session.component')
         .then(c => c.SessionComponent)
   },
- /* {
+ {
     path: 'progress',
     loadComponent: () =>
       import('./progress/progress.component')
         .then(c => c.ProgressComponent)
   },
-  {
+  /* {
     path: 'messages',
     loadComponent: () =>
       import('./messages/messages.component')

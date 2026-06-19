@@ -42,4 +42,8 @@ export class SessionService {
     return this.http.post<SessionResponse>(
       `${this.API}/${sessionId}/interrupt`, {});
   }
+  getMyHistory(): Observable<SessionResponse[]> {
+  return this.http.get<SessionResponse[]>(
+    `${this.API}/my`);
+}
 }

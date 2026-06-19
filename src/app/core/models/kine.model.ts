@@ -16,3 +16,12 @@ export interface DashboardKineResponse {
   patients: PatientResponse[];
   recentAlerts: AlertResponse[];
 }
+
+export interface KineResponse {
+  id: string;
+  fullName: string;
+  speciality: string;
+  validated: boolean;
+  patientCount: number;
+  email: string;
+}

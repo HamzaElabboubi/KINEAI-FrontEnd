@@ -1,0 +1,312 @@
+<div class="min-h-screen bg-gray-50 flex">
+
+  <app-patient-sidebar></app-patient-sidebar>
+
+  <div class="ml-56 flex-1 px-8 py-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between
+                mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">
+          Mes progrès
+        </h1>
+        <p class="text-sm text-gray-400 mt-1">
+          Suivez votre évolution séance après séance
+        </p>
+      </div>
+
+      <!-- Filtre période -->
+      <div class="flex items-center gap-1 bg-white
+                  border border-gray-100 rounded-xl
+                  p-1">
+        <button (click)="setPeriod('7')"
+                class="px-4 py-1.5 text-sm rounded-lg
+                       transition-all"
+                [class.bg-blue-50]="periodFilter()==='7'"
+                [class.text-blue-700]="periodFilter()==='7'"
+                [class.font-medium]="periodFilter()==='7'"
+                [class.text-gray-500]="periodFilter()!=='7'">
+          7 jours
+        </button>
+        <button (click)="setPeriod('30')"
+                class="px-4 py-1.5 text-sm rounded-lg
+                       transition-all"
+                [class.bg-blue-50]="periodFilter()==='30'"
+                [class.text-blue-700]="periodFilter()==='30'"
+                [class.font-medium]="periodFilter()==='30'"
+                [class.text-gray-500]="periodFilter()!=='30'">
+          30 jours
+        </button>
+        <button (click)="setPeriod('all')"
+                class="px-4 py-1.5 text-sm rounded-lg
+                       transition-all"
+                [class.bg-blue-50]="periodFilter()==='all'"
+                [class.text-blue-700]="periodFilter()==='all'"
+                [class.font-medium]="periodFilter()==='all'"
+                [class.text-gray-500]="periodFilter()!=='all'">
+          Tout
+        </button>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="flex justify-center py-16">
+        <svg class="w-5 h-5 animate-spin text-blue-500"
+             fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12"
+                  r="10" stroke="currentColor"
+                  stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0
+                   0 5.373 0 12h4z"/>
+        </svg>
+      </div>
+    }
+
+    @if (errorMsg()) {
+      <div class="bg-red-50 border border-red-200
+                  rounded-xl p-4 mb-4 text-sm
+                  text-red-600">
+        {{ errorMsg() }}
+      </div>
+    }
+
+    @if (!isLoading() && !errorMsg()) {
+
+      @if (totalSessions === 0) {
+        <div class="bg-white border border-gray-100
+                    rounded-2xl py-16 text-center">
+          <div class="text-4xl mb-3">📊</div>
+          <p class="text-sm font-medium text-gray-700">
+            Aucune séance sur cette période
+          </p>
+          <p class="text-xs text-gray-400 mt-1">
+            Vos statistiques apparaîtront après votre
+            première séance complétée
+          </p>
+        </div>
+      } @else {
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-4 gap-4 mb-6">
+
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-5">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-9 h-9 bg-blue-50 rounded-lg
+                          flex items-center justify-center">
+                <svg class="w-4 h-4 text-blue-500"
+                     fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14
+                           a2 2 0 002-2V7a2 2 0 00-2-2H5
+                           a2 2 0 00-2 2v12a2 2 0
+                           002 2z"/>
+                </svg>
+              </div>
+              <span class="text-sm text-gray-500">
+                Séances
+              </span>
+            </div>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ totalSessions }}
+            </p>
+          </div>
+
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-5">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-9 h-9 bg-green-50 rounded-lg
+                          flex items-center justify-center">
+                <svg class="w-4 h-4 text-green-500"
+                     fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0
+                           11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <span class="text-sm text-gray-500">
+                Score moyen
+              </span>
+            </div>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ averageScore }}%
+            </p>
+          </div>
+
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-5">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-9 h-9 bg-purple-50 rounded-lg
+                          flex items-center justify-center">
+                <svg class="w-4 h-4 text-purple-500"
+                     fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+              </div>
+              <span class="text-sm text-gray-500">
+                Répétitions
+              </span>
+            </div>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ totalReps }}
+            </p>
+          </div>
+
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-5">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-9 h-9 bg-amber-50 rounded-lg
+                          flex items-center justify-center">
+                <span class="text-amber-500 text-sm">
+                  ⭐
+                </span>
+              </div>
+              <span class="text-sm text-gray-500">
+                XP gagné
+              </span>
+            </div>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ totalXp }}
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Courbe + Répartition -->
+        <div class="grid grid-cols-3 gap-4 mb-4">
+
+          <div class="col-span-2 bg-white border
+                      border-gray-100 rounded-2xl p-5">
+            <h3 class="text-sm font-semibold
+                       text-gray-900 mb-4">
+              Évolution du score
+            </h3>
+            <div style="height: 240px;">
+              <canvas #scoreChart></canvas>
+            </div>
+          </div>
+
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-5">
+            <h3 class="text-sm font-semibold
+                       text-gray-900 mb-4">
+              Par exercice
+            </h3>
+            <div style="height: 240px;">
+              <canvas #exerciseChart></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Historique détaillé -->
+        <div class="bg-white border border-gray-100
+                    rounded-2xl overflow-hidden">
+          <div class="px-5 py-4 border-b
+                      border-gray-100">
+            <h3 class="text-sm font-semibold
+                       text-gray-900">
+              Historique des séances
+            </h3>
+          </div>
+
+          <div class="px-5 py-2.5 grid grid-cols-5
+                      gap-4 bg-gray-50 border-b
+                      border-gray-100">
+            <div class="text-xs font-medium
+                        text-gray-400 uppercase
+                        tracking-wider">
+              Date
+            </div>
+            <div class="text-xs font-medium
+                        text-gray-400 uppercase
+                        tracking-wider">
+              Exercice
+            </div>
+            <div class="text-xs font-medium
+                        text-gray-400 uppercase
+                        tracking-wider text-center">
+              Score
+            </div>
+            <div class="text-xs font-medium
+                        text-gray-400 uppercase
+                        tracking-wider text-center">
+              Reps
+            </div>
+            <div class="text-xs font-medium
+                        text-gray-400 uppercase
+                        tracking-wider text-right">
+              Statut
+            </div>
+          </div>
+
+          <div class="divide-y divide-gray-50
+                      max-h-96 overflow-y-auto">
+            @for (session of filteredSessions()
+                  .slice().reverse();
+                  track session.id) {
+              <div class="px-5 py-3 grid grid-cols-5
+                          gap-4 items-center
+                          hover:bg-gray-50/50
+                          transition-colors">
+                <div class="text-sm text-gray-600">
+                  {{ session.startTime
+                     | date:'dd/MM/yyyy HH:mm' }}
+                </div>
+                <div class="text-sm font-medium
+                            text-gray-900">
+                  {{ session.exerciseName }}
+                </div>
+                <div class="text-center">
+                  <span class="text-sm font-semibold"
+                        [class.text-green-600]="
+                          (session.score ?? 0) >= 70"
+                        [class.text-amber-600]="
+                          (session.score ?? 0) >= 50
+                          && (session.score ?? 0) < 70"
+                        [class.text-red-500]="
+                          (session.score ?? 0) < 50">
+                    {{ session.score
+                       | number:'1.0-0' }}%
+                  </span>
+                </div>
+                <div class="text-center text-sm
+                            text-gray-600">
+                  {{ session.repsCompleted }}
+                </div>
+                <div class="text-right">
+                  <span class="text-xs px-2.5 py-1
+                               rounded-full font-medium"
+                        [class.bg-green-50]="
+                          session.status==='COMPLETED'"
+                        [class.text-green-600]="
+                          session.status==='COMPLETED'"
+                        [class.bg-red-50]="
+                          session.status==='INTERRUPTED'"
+                        [class.text-red-500]="
+                          session.status==='INTERRUPTED'">
+                    {{ getStatusLabel(session.status) }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+      }
+    }
+
+  </div>
+</div>

@@ -30,6 +30,12 @@ export class DashboardComponent
   @ViewChild('kinesChart')
   kinesChartRef!: ElementRef<HTMLCanvasElement>;
 
+  @ViewChild('levelChart')
+  levelChartRef!: ElementRef<HTMLCanvasElement>;
+
+  @ViewChild('pathologyChart')
+  pathologyChartRef!: ElementRef<HTMLCanvasElement>;
+
   private adminService = inject(AdminService);
   private authService  = inject(AuthService);
 
@@ -40,6 +46,8 @@ export class DashboardComponent
   errorMsg     = signal<string>('');
 
   private chart: Chart | null = null;
+  private levelChart: Chart | null = null;
+  private pathologyChart: Chart | null = null;
 
   get adminName(): string {
     return this.authService.getFullName()
@@ -54,6 +62,8 @@ export class DashboardComponent
 
   ngOnDestroy(): void {
     this.chart?.destroy();
+    this.levelChart?.destroy();
+    this.pathologyChart?.destroy();
   }
 
   loadDashboard(): void {
@@ -74,21 +84,24 @@ export class DashboardComponent
     this.adminService.getStats().subscribe({
       next: (s: AdminStatsResponse) => {
         this.stats.set(s);
-        setTimeout(() => this.initChart(), 100);
+        setTimeout(() => {
+          this.initChart();
+          this.initLevelChart();
+          this.initPathologyChart();
+        }, 100);
       },
-      error: () => {
-        // Dashboard reste fonctionnel sans stats
-      }
+      error: () => {}
     });
   }
 
-  // ── Graphique répartition kinés ───────────
   private initChart(): void {
     if (!this.kinesChartRef?.nativeElement) return;
     this.chart?.destroy();
 
-    const s = this.stats();
-    if (!s) return;
+    const validated = this.stats()?.validatedKines ?? 0;
+    const pending = this.stats()?.pendingKines ?? 0;
+    const total = validated + pending;
+    if (total === 0) return;
 
     this.chart = new Chart(
       this.kinesChartRef.nativeElement, {
@@ -96,13 +109,90 @@ export class DashboardComponent
       data: {
         labels: ['Validés', 'En attente'],
         datasets: [{
-          data: [s.validatedKines, s.pendingKines],
+          data: [validated, pending],
           backgroundColor: [
-            'rgba(34, 197, 94, 0.9)',
-            'rgba(245, 158, 11, 0.9)'
+            'rgba(34, 197, 94, 0.85)',
+            'rgba(245, 158, 11, 0.85)'
           ],
           borderWidth: 0,
-          hoverOffset: 4
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        cutout: '65%'
+      }
+    });
+  }
+
+  private initLevelChart(): void {
+    if (!this.levelChartRef?.nativeElement) return;
+    this.levelChart?.destroy();
+
+    const data = this.stats()?.patientsByLevel ?? {};
+    const labels = Object.keys(data).map(k =>
+      this.getLevelLabel(k));
+    const values = Object.values(data);
+
+    this.levelChart = new Chart(
+      this.levelChartRef.nativeElement, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          backgroundColor: [
+            'rgba(34, 197, 94, 0.8)',
+            'rgba(59, 130, 246, 0.8)',
+            'rgba(168, 85, 247, 0.8)'
+          ],
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 1 },
+            grid: { color: '#f3f4f6' }
+          },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  private initPathologyChart(): void {
+    if (!this.pathologyChartRef?.nativeElement) return;
+    this.pathologyChart?.destroy();
+
+    const data = this.stats()?.patientsByPathology ?? {};
+    const labels = Object.keys(data).map(k =>
+      this.getPathologyLabel(k));
+    const values = Object.values(data);
+
+    this.pathologyChart = new Chart(
+      this.pathologyChartRef.nativeElement, {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          backgroundColor: [
+            'rgba(59, 130, 246, 0.85)',
+            'rgba(34, 197, 94, 0.85)',
+            'rgba(245, 158, 11, 0.85)',
+            'rgba(168, 85, 247, 0.85)',
+            'rgba(236, 72, 153, 0.85)'
+          ],
+          borderWidth: 0
         }]
       },
       options: {
@@ -112,17 +202,34 @@ export class DashboardComponent
           legend: {
             position: 'bottom',
             labels: {
-              font: { size: 12 },
-              padding: 14,
-              color: '#6b7280',
+              font: { size: 11 },
+              padding: 10,
               usePointStyle: true,
               pointStyle: 'circle'
             }
           }
         },
-        cutout: '70%'
+        cutout: '65%'
       }
     });
+  }
+
+  getLevelLabel(level: string): string {
+    const labels: Record<string, string> = {
+      'DEBUTANT': 'Débutant',
+      'INTERMEDIAIRE': 'Intermédiaire',
+      'AVANCE': 'Avancé'
+    };
+    return labels[level] || level;
+  }
+
+  getPathologyLabel(p: string): string {
+    const labels: Record<string, string> = {
+      'GENOU': 'Genou', 'EPAULE': 'Épaule',
+      'DOS': 'Dos', 'HANCHE': 'Hanche',
+      'COUDE': 'Coude'
+    };
+    return labels[p] || p;
   }
 
   validateKine(id: string, name: string): void {
@@ -162,7 +269,11 @@ export class DashboardComponent
     this.adminService.getStats().subscribe({
       next: (s: AdminStatsResponse) => {
         this.stats.set(s);
-        setTimeout(() => this.initChart(), 100);
+        setTimeout(() => {
+          this.initChart();
+          this.initLevelChart();
+          this.initPathologyChart();
+        }, 100);
       }
     });
   }

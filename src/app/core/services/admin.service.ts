@@ -18,6 +18,8 @@ export interface AdminStatsResponse {
   totalKines: number;
   validatedKines: number;
   pendingKines: number;
+  patientsByLevel: Record<string, number>;
+  patientsByPathology: Record<string, number>;
 }
 
 @Injectable({
@@ -83,4 +85,12 @@ export class AdminService {
     return this.http.put<PatientResponse>(
       `${this.API}/patients/${id}/reactivate`, {});
   }
+
+  reassignKine(
+  patientId: string, newKineId: string
+): Observable<PatientResponse> {
+  return this.http.put<PatientResponse>(
+    `${this.API}/patients/${patientId}/reassign`
+    + `?newKineId=${newKineId}`, {});
+}
 }

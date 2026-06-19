@@ -23,4 +23,10 @@ getMyProfile(): Observable<PatientResponse> {
   return this.http.get<PatientResponse>(
     `${this.API}/patient/profile`);
 }
+
+// ── Patients du kiné connecté ──────────────
+getMyPatients(): Observable<PatientResponse[]> {
+  return this.http.get<PatientResponse[]>(
+    `${this.API}/kine/patients`);
+}
 }
