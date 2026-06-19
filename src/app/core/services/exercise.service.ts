@@ -20,4 +20,10 @@ export class ExerciseService {
     return this.http.get<ExerciseResponse[]>(
       `${this.API}/zone/${zone}`);
   }
+
+  // ✅ Nouvelle méthode pour le patient connecté
+getMyExercises(): Observable<ExerciseResponse[]> {
+    return this.http.get<ExerciseResponse[]>(
+        `${this.API}/exercises/my`);
+}
 }

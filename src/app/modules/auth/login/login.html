@@ -1,203 +1,359 @@
-<div class="min-h-screen bg-gradient-to-br from-slate-900
-            via-blue-950 to-slate-900 flex items-center
-            justify-center p-4">
+<!-- Fond avec formes décoratives -->
+<div class="min-h-screen flex flex-col items-center
+            justify-center relative overflow-hidden"
+     style="background: linear-gradient(135deg,
+            #e8f0fe 0%, #f0f4ff 50%, #e8f0fe 100%);">
 
-  <!-- Card principale -->
-  <div class="w-full max-w-md">
+  <!-- Forme décorative haut gauche -->
+  <div class="absolute top-0 left-0 w-64 h-64
+              rounded-full opacity-30 -translate-x-1/3
+              -translate-y-1/3"
+       style="background: radial-gradient(circle,
+              #bfcfff 0%, #dde8ff 70%,
+              transparent 100%);">
+  </div>
 
-    <!-- Logo + Titre -->
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center
-                  w-16 h-16 bg-blue-600 rounded-2xl mb-4
-                  shadow-lg shadow-blue-500/30">
-        <svg class="w-8 h-8 text-white" fill="none"
+  <!-- Forme décorative bas droite -->
+  <div class="absolute bottom-0 right-0 w-80 h-80
+              rounded-full opacity-25 translate-x-1/3
+              translate-y-1/3"
+       style="background: radial-gradient(circle,
+              #bfcfff 0%, #dde8ff 70%,
+              transparent 100%);">
+  </div>
+
+  <!-- Points décoratifs gauche -->
+  <div class="absolute left-8 top-1/3 grid
+              gap-2 opacity-40"
+       style="grid-template-columns: repeat(4, 1fr);">
+    @for (dot of decorDots; track $index) {
+      <div class="w-1 h-1 rounded-full bg-blue-300">
+      </div>
+    }
+  </div>
+
+  <!-- Points décoratifs droite -->
+  <div class="absolute right-8 bottom-1/3 grid
+              gap-2 opacity-40"
+       style="grid-template-columns: repeat(4, 1fr);">
+    @for (dot of decorDots; track $index) {
+      <div class="w-1 h-1 rounded-full bg-blue-300">
+      </div>
+    }
+  </div>
+
+  <!-- Logo + titre -->
+  <div class="flex flex-col items-center mb-6 z-10">
+    <div class="w-16 h-16 bg-blue-600 rounded-2xl
+                flex items-center justify-center
+                shadow-lg mb-3">
+      <!-- ✅ Votre vrai logo -->
+    <img [src]="logoUrl"
+     alt="KINEAI Logo"
+     class="w-16 h-16 rounded-2xl object-cover shadow-lg"/>
+    </div>
+    <h1 class="text-2xl font-black text-gray-900
+               tracking-widest">
+      KINEAI
+    </h1>
+    <p class="text-sm text-gray-400 mt-1">
+      Plateforme de rééducation intelligente
+    </p>
+    <!-- Ligne décorative bleue -->
+    <div class="w-8 h-0.5 bg-blue-600 rounded-full
+                mt-2">
+    </div>
+  </div>
+
+  <!-- Carte login -->
+  <div class="bg-white rounded-2xl shadow-sm
+              border border-gray-100 p-8 w-full
+              max-w-md z-10 mx-4">
+
+    <!-- Header carte -->
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-9 h-9 bg-blue-50 rounded-lg
+                  flex items-center justify-center">
+        <svg class="w-5 h-5 text-blue-500" fill="none"
              viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round"
-                stroke-width="2"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12
-                   20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12
-                   7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+          <path stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0z
+                   M12 14a7 7 0 00-7 7h14a7 7 0
+                   00-7-7z"/>
         </svg>
       </div>
-      <h1 class="text-3xl font-bold text-white tracking-tight">
-        KINEAI
-      </h1>
-      <p class="text-slate-400 mt-1 text-sm">
-        Plateforme de rééducation intelligente
-      </p>
-    </div>
-
-    <!-- Formulaire -->
-    <div class="bg-slate-800/50 backdrop-blur-sm border
-                border-slate-700/50 rounded-2xl p-8
-                shadow-2xl">
-
-      <h2 class="text-xl font-semibold text-white mb-6">
-        Connexion
-      </h2>
-
-      <!-- Message erreur -->
-      @if (errorMessage) {
-        <div class="flex items-center gap-3 bg-red-500/10
-                    border border-red-500/30 rounded-xl p-4
-                    mb-6">
-          <svg class="w-5 h-5 text-red-400 shrink-0"
-               fill="none" viewBox="0 0 24 24"
-               stroke="currentColor">
-            <path stroke-linecap="round"
-                  stroke-linejoin="round" stroke-width="2"
-                  d="M12 8v4m0 4h.01M21 12a9 9 0
-                     11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <p class="text-red-400 text-sm">{{ errorMessage }}</p>
-        </div>
-      }
-
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-
-        <!-- Email -->
-        <div class="mb-5">
-          <label class="block text-sm font-medium
-                        text-slate-300 mb-2">
-            Adresse email
-          </label>
-          <input
-            type="email"
-            formControlName="email"
-            placeholder="votre@email.com"
-            class="w-full bg-slate-700/50 border border-slate-600
-                   text-white placeholder-slate-400 rounded-xl
-                   px-4 py-3 text-sm outline-none transition-all
-                   focus:border-blue-500 focus:ring-2
-                   focus:ring-blue-500/20"
-            [class.border-red-500]="email?.invalid && email?.touched"
-          />
-          @if (email?.invalid && email?.touched) {
-            <p class="text-red-400 text-xs mt-1.5">
-              @if (email?.errors?.['required']) {
-                L'email est obligatoire
-              }
-              @if (email?.errors?.['email']) {
-                Format email invalide
-              }
-            </p>
-          }
-        </div>
-
-        <!-- Mot de passe -->
-        <div class="mb-6">
-          <label class="block text-sm font-medium
-                        text-slate-300 mb-2">
-            Mot de passe
-          </label>
-          <div class="relative">
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              formControlName="password"
-              placeholder="••••••••"
-              class="w-full bg-slate-700/50 border border-slate-600
-                     text-white placeholder-slate-400 rounded-xl
-                     px-4 py-3 pr-12 text-sm outline-none
-                     transition-all focus:border-blue-500
-                     focus:ring-2 focus:ring-blue-500/20"
-              [class.border-red-500]="password?.invalid
-                                      && password?.touched"
-            />
-            <!-- Toggle password -->
-            <button type="button"
-                    (click)="togglePassword()"
-                    class="absolute right-3 top-1/2 -translate-y-1/2
-                           text-slate-400 hover:text-slate-200
-                           transition-colors">
-              @if (showPassword) {
-                <svg class="w-5 h-5" fill="none"
-                     viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round"
-                        stroke-linejoin="round" stroke-width="2"
-                        d="M13.875 18.825A10.05 10.05 0
-                           0112 19c-4.478 0-8.268-2.943-9.543-7a9.97
-                           9.97 0 011.563-3.029m5.858.908a3 3 0
-                           114.243 4.243M9.878 9.878l4.242
-                           4.242M9.88 9.88l-3.29-3.29m7.532
-                           7.532l3.29 3.29M3 3l3.59 3.59m0
-                           0A9.953 9.953 0 0112 5c4.478 0
-                           8.268 2.943 9.543 7a10.025 10.025
-                           0 01-4.132 4.411m0 0L21 21"/>
-                </svg>
-              } @else {
-                <svg class="w-5 h-5" fill="none"
-                     viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round"
-                        stroke-linejoin="round" stroke-width="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016
-                           0z M2.458 12C3.732 7.943 7.523 5
-                           12 5c4.478 0 8.268 2.943 9.542
-                           7-1.274 4.057-5.064 7-9.542
-                           7-4.477 0-8.268-2.943-9.542-7z"/>
-                </svg>
-              }
-            </button>
-          </div>
-          @if (password?.invalid && password?.touched) {
-            <p class="text-red-400 text-xs mt-1.5">
-              @if (password?.errors?.['required']) {
-                Le mot de passe est obligatoire
-              }
-              @if (password?.errors?.['minlength']) {
-                Minimum 8 caractères
-              }
-            </p>
-          }
-        </div>
-
-        <!-- Bouton connexion -->
-        <button
-          type="submit"
-          [disabled]="loginForm.invalid || isLoading"
-          class="w-full bg-blue-600 hover:bg-blue-500
-                 disabled:bg-slate-600 disabled:cursor-not-allowed
-                 text-white font-semibold rounded-xl py-3
-                 transition-all duration-200 flex items-center
-                 justify-center gap-2 shadow-lg
-                 shadow-blue-500/20">
-
-          @if (isLoading) {
-            <!-- Spinner -->
-            <svg class="w-5 h-5 animate-spin"
-                 fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12"
-                      r="10" stroke="currentColor"
-                      stroke-width="4"/>
-              <path class="opacity-75" fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0
-                       5.373 0 12h4z"/>
-            </svg>
-            <span>Connexion en cours...</span>
-          } @else {
-            <span>Se connecter</span>
-          }
-        </button>
-
-      </form>
-
-      <!-- Lien inscription -->
-      <div class="mt-6 text-center">
-        <p class="text-slate-400 text-sm">
-          Pas encore de compte ?
-          <a routerLink="/auth/register"
-             class="text-blue-400 hover:text-blue-300
-                    font-medium transition-colors">
-            S'inscrire
-          </a>
+      <div>
+        <h2 class="text-lg font-bold text-gray-900
+                   leading-none">
+          Connexion
+        </h2>
+        <p class="text-xs text-gray-400 mt-0.5">
+          Bienvenue ! Veuillez vous connecter
+          à votre compte.
         </p>
       </div>
-
     </div>
 
-    <!-- Footer -->
-    <p class="text-center text-slate-500 text-xs mt-6">
-      © 2025 KINEAI — Tous droits réservés
+    <!-- Message erreur global -->
+    @if (errorMsg()) {
+      <div class="flex items-center gap-2.5
+                  bg-red-50 border border-red-200
+                  rounded-xl px-4 py-3 mb-5">
+        <svg class="w-4 h-4 text-red-500 flex-shrink-0"
+             fill="none" viewBox="0 0 24 24"
+             stroke="currentColor">
+          <path stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0
+                   11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p class="text-sm text-red-600">
+          {{ errorMsg() }}
+        </p>
+      </div>
+    }
+
+    <form [formGroup]="loginForm"
+          (ngSubmit)="onSubmit()">
+
+      <!-- Email -->
+      <div class="mb-4">
+        <label class="block text-sm font-semibold
+                      text-gray-800 mb-1.5">
+          Adresse email
+        </label>
+        <div class="relative">
+          <div class="absolute left-3.5 top-1/2
+                      -translate-y-1/2">
+            <svg class="w-4 h-4 text-gray-400"
+                 fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8l7.89 5.26a2 2 0 002.22
+                       0L21 8M5 19h14a2 2 0 002-2V7a2
+                       2 0 00-2-2H5a2 2 0 00-2 2v10a2
+                       2 0 002 2z"/>
+            </svg>
+          </div>
+          <input type="email"
+                 formControlName="email"
+                 placeholder="votre@email.com"
+                 class="w-full pl-10 pr-4 py-2.5
+                        text-sm border rounded-xl
+                        outline-none transition-colors
+                        text-gray-900
+                        placeholder-gray-400"
+                 [class.border-red-300]="
+                   loginForm.get('email')?.invalid
+                   && loginForm.get('email')?.touched"
+                 [class.bg-red-50]="
+                   loginForm.get('email')?.invalid
+                   && loginForm.get('email')?.touched"
+                 [class.border-gray-200]="
+                   !(loginForm.get('email')?.invalid
+                   && loginForm.get('email')?.touched)"
+                 [class.focus:border-blue-400]="true"/>
+        </div>
+        @if (loginForm.get('email')?.invalid
+             && loginForm.get('email')?.touched) {
+          <p class="text-xs text-red-500 mt-1">
+            Veuillez entrer une adresse email valide.
+          </p>
+        }
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="mb-4">
+        <label class="block text-sm font-semibold
+                      text-gray-800 mb-1.5">
+          Mot de passe
+        </label>
+        <div class="relative">
+          <div class="absolute left-3.5 top-1/2
+                      -translate-y-1/2">
+            <svg class="w-4 h-4 text-gray-400"
+                 fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6
+                       a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2
+                       2 0 002 2zm10-10V7a4 4 0 00-8
+                       0v4h8z"/>
+            </svg>
+          </div>
+          <input [type]="showPassword ? 'text' : 'password'"
+                 formControlName="password"
+                 placeholder="••••••••••"
+                 class="w-full pl-10 pr-10 py-2.5
+                        text-sm border rounded-xl
+                        outline-none transition-colors
+                        text-gray-900
+                        placeholder-gray-400"
+                 [class.border-red-300]="
+                   loginForm.get('password')?.invalid
+                   && loginForm.get('password')?.touched"
+                 [class.bg-red-50]="
+                   loginForm.get('password')?.invalid
+                   && loginForm.get('password')?.touched"
+                 [class.border-gray-200]="
+                   !(loginForm.get('password')?.invalid
+                   && loginForm.get('password')?.touched)"/>
+
+          <!-- Toggle visibilité password -->
+          <button type="button"
+                  (click)="togglePassword()"
+                  class="absolute right-3.5 top-1/2
+                         -translate-y-1/2 text-gray-400
+                         hover:text-gray-600
+                         transition-colors">
+            @if (showPassword) {
+              <svg class="w-4 h-4" fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13.875 18.825A10.05 10.05
+                         0 0112 19c-4.478 0-8.268
+                         -2.943-9.543-7a9.97 9.97 0
+                         011.563-3.029m5.858.908a3 3
+                         0 114.243 4.243M9.878
+                         9.878l4.242 4.242M9.88
+                         9.88l-3.29-3.29m7.532 7.532
+                         l3.29 3.29M3 3l3.59 3.59m0
+                         0A9.953 9.953 0 0112 5c4.478
+                         0 8.268 2.943 9.543 7a10.025
+                         10.025 0 01-4.132 5.411m0
+                         0L21 21"/>
+              </svg>
+            } @else {
+              <svg class="w-4 h-4" fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0
+                         016 0zM2.458 12C3.732 7.943
+                         7.523 5 12 5c4.478 0 8.268
+                         2.943 9.542 7-1.274 4.057
+                         -5.064 7-9.542 7-4.477
+                         0-8.268-2.943-9.542-7z"/>
+              </svg>
+            }
+          </button>
+        </div>
+        @if (loginForm.get('password')?.invalid
+             && loginForm.get('password')?.touched) {
+          <p class="text-xs text-red-500 mt-1">
+            Le mot de passe est obligatoire.
+          </p>
+        }
+      </div>
+
+      <!-- Se souvenir + Mot de passe oublié -->
+      <div class="flex items-center justify-between
+                  mb-6">
+        <label class="flex items-center gap-2
+                      cursor-pointer">
+          <input type="checkbox"
+                 class="w-4 h-4 rounded border-gray-300
+                        text-blue-600 cursor-pointer"/>
+          <span class="text-sm text-gray-600">
+            Se souvenir de moi
+          </span>
+        </label>
+        <a href="#"
+           class="text-sm text-blue-600
+                  hover:text-blue-700 font-medium
+                  transition-colors">
+          Mot de passe oublié ?
+        </a>
+      </div>
+
+      <!-- Bouton connexion -->
+      <button type="submit"
+              [disabled]="isLoading() || loginForm.invalid"
+              class="w-full flex items-center
+                     justify-center gap-2 py-3
+                     bg-blue-600 hover:bg-blue-700
+                     disabled:bg-blue-400
+                     disabled:cursor-not-allowed
+                     text-white text-sm font-semibold
+                     rounded-xl transition-colors
+                     shadow-sm">
+        @if (isLoading()) {
+          <svg class="w-4 h-4 animate-spin"
+               fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12"
+                    r="10" stroke="currentColor"
+                    stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0
+                     0 5.373 0 12h4z"/>
+          </svg>
+          Connexion en cours...
+        } @else {
+          <svg class="w-4 h-4" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round" stroke-width="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6
+                     a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2
+                     2 0 002 2zm10-10V7a4 4 0 00-8
+                     0v4h8z"/>
+          </svg>
+          Se connecter
+        }
+      </button>
+
+    </form>
+
+    <!-- Séparateur -->
+    <div class="flex items-center gap-3 my-5">
+      <div class="flex-1 h-px bg-gray-100"></div>
+      <span class="text-xs text-gray-400">ou</span>
+      <div class="flex-1 h-px bg-gray-100"></div>
+    </div>
+
+    <!-- Lien inscription -->
+    <p class="text-center text-sm text-gray-500">
+      Pas encore de compte ?
+      <a routerLink="/auth/register"
+         class="text-blue-600 font-semibold
+                hover:text-blue-700 transition-colors
+                ml-1">
+        S'inscrire
+      </a>
     </p>
 
   </div>
+
+  <!-- Footer sécurité -->
+  <div class="flex items-center gap-2 mt-6 z-10">
+    <svg class="w-3.5 h-3.5 text-gray-400" fill="none"
+         viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round"
+            stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955
+               11.955 0 0112 2.944a11.955 11.955 0
+               01-8.618 3.04A12.02 12.02 0 003 9c0
+               5.591 3.824 10.29 9 11.622 5.176
+               -1.332 9-6.03 9-11.622 0-1.042
+               -.133-2.052-.382-3.016z"/>
+    </svg>
+    <p class="text-xs text-gray-400">
+      Vos données sont sécurisées et confidentielles
+    </p>
+  </div>
+
+  <p class="text-xs text-gray-400 mt-2 z-10">
+    © 2025 KINEAI — Tous droits réservés
+  </p>
+
 </div>

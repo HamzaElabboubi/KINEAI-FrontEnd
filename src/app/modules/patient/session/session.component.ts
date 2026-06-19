@@ -181,18 +181,18 @@ export class SessionComponent
   // ══════════════════════════════════════════
   // EXERCICES
   // ══════════════════════════════════════════
-  loadExercises(): void {
-    this.exerciseService.getAll().subscribe({
-      next: (exs: ExerciseResponse[]) => {
-        this.exercises.set(exs);
-      },
-      error: () => {
-        this.errorMsg.set(
-          'Impossible de charger les exercices.'
-          + ' Vérifiez votre connexion.');
-      }
+  // ✅ Après — exercices filtrés par pathologie + niveau
+loadExercises(): void {
+    this.exerciseService.getMyExercises().subscribe({
+        next: (exs: ExerciseResponse[]) => {
+            this.exercises.set(exs);
+        },
+        error: () => {
+            this.errorMsg.set(
+                'Aucun plan actif — contactez votre kinésithérapeute');
+        }
     });
-  }
+}
 
   selectExercise(ex: ExerciseResponse): void {
     this.selectedEx.set(ex);

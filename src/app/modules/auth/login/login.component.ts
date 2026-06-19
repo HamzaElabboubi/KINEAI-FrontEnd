@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder,
          FormGroup, Validators } from '@angular/forms';
@@ -16,6 +16,8 @@ import { AuthResponse }
   styleUrls: ['./login.scss']
 })
 export class LoginComponent {
+
+  readonly logoUrl = 'assets/images/logo.png';
   private authService = inject(AuthService);
   private router      = inject(Router);
   private fb          = inject(FormBuilder);
@@ -26,12 +28,18 @@ export class LoginComponent {
                     Validators.minLength(8)]]
   });
 
-  isLoading    = false;
-  errorMessage = '';
+  isLoading    = signal(false);
+  errorMsg     = signal('');
   showPassword = false;
 
   get email()    { return this.loginForm.get('email');    }
   get password() { return this.loginForm.get('password'); }
+
+  // Variable toggle password
+
+// Points décoratifs (16 points = 4x4 grid)
+readonly decorDots = Array(16).fill(0);
+
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
@@ -40,17 +48,17 @@ export class LoginComponent {
   onSubmit(): void {
     if (this.loginForm.invalid) return;
 
-    this.isLoading    = true;
-    this.errorMessage = '';
+    this.isLoading.set(true);
+    this.errorMsg.set('');
 
     this.authService.login(this.loginForm.value).subscribe({
       next: (response: AuthResponse) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.redirectByRole(response.role);
       },
       error: (err: { message: string; status: number }) => {
-        this.isLoading = false;
-        this.errorMessage = err.message;
+        this.isLoading.set(false);
+        this.errorMsg.set(err.message);
       }
     });
   }
