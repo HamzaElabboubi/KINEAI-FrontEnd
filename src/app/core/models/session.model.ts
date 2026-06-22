@@ -12,7 +12,7 @@ export interface ExerciseResponse {
 
 export interface CreateSessionRequest {
   exerciseId: string;
-  planId?: string;
+  planId?: string | null;
 }
 
 export interface SaveMetricsRequest {

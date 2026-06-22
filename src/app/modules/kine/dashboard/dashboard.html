@@ -132,68 +132,83 @@
 
       </div>
 
-      <!-- Mes patients + Répartition alertes --><div class="divide-y divide-gray-50">
+     <div class="divide-y divide-gray-50">
   @for (patient of filteredPatients;
         track patient.id) {
-    <div class="px-5 py-3 flex items-center
+    <div class="px-5 py-4 flex items-center
                 gap-4 hover:bg-gray-50/50
-                transition-colors cursor-pointer">
+                transition-colors cursor-pointer
+                group">
 
-      <div class="w-9 h-9 rounded-full
+      <!-- Avatar -->
+      <div class="w-10 h-10 rounded-full
                   bg-gradient-to-br
-                  from-blue-400
-                  to-indigo-600
+                  from-blue-400 to-indigo-600
                   flex items-center
                   justify-center text-sm
-                  font-medium text-white
+                  font-semibold text-white
                   flex-shrink-0">
         {{ patient.fullName.charAt(0)
-           .toUpperCase() }}
+           .toUpperCase() }}{{ patient.fullName
+           .split(' ')[1]?.charAt(0)
+           ?.toUpperCase() }}
       </div>
 
-      <div class="w-36 flex-shrink-0">
-        <p class="text-sm font-medium
+      <!-- Nom + pathologie -->
+      <div class="w-44 flex-shrink-0">
+        <p class="text-sm font-semibold
                   text-gray-900 truncate">
           {{ patient.fullName }}
         </p>
-        <p class="text-xs text-gray-400
-                  truncate">
-          {{ patient.pathology }}
+        <p class="text-xs text-gray-400 truncate
+                  mt-0.5">
+          {{ getPathologyLabel(
+             patient.pathology) }}
         </p>
       </div>
 
-      <span class="text-xs px-2 py-0.5
+      <!-- Badge niveau -->
+      <span class="text-xs px-2.5 py-1
                    rounded-full font-medium
-                   flex-shrink-0
+                   flex-shrink-0 w-28 text-center
                    {{ getLevelColor(
                       patient.level) }}">
         {{ getLevelLabel(patient.level) }}
       </span>
 
+      <!-- Streak -->
       <div class="flex items-center gap-1
-                  flex-shrink-0">
+                  flex-shrink-0 w-16">
         <span class="text-amber-400 text-sm">
           🔥
         </span>
-        <span class="text-xs text-gray-600
-                     font-medium">
-          {{ patient.streakCount }} jours
-        </span>
-      </div>
-
-      <div class="flex-1 text-right">
-        <span class="text-xs text-gray-400">
-          XP total
-        </span>
         <span class="text-sm font-semibold
-                     text-amber-600 ml-1.5">
-          {{ patient.totalXp }}
+                     text-gray-700">
+          {{ patient.streakCount }}
         </span>
       </div>
 
+      <!-- Espace flexible -->
+      <div class="flex-1"></div>
+
+      <!-- XP -->
+      <div class="text-right flex-shrink-0
+                  w-24">
+        <p class="text-xs text-gray-400">
+          XP total
+        </p>
+        <p class="text-sm font-semibold
+                  text-amber-600 mt-0.5">
+          {{ patient.totalXp }}
+        </p>
+      </div>
+
+      <!-- Chevron -->
       <svg class="w-4 h-4 text-gray-300
-                  flex-shrink-0" fill="none"
-           viewBox="0 0 24 24"
+                  flex-shrink-0 transition-transform
+                  group-hover:translate-x-0.5
+                  group-hover:text-blue-400"
+           fill="none" viewBox="0 0 24 24"
            stroke="currentColor">
         <path stroke-linecap="round"
               stroke-linejoin="round"

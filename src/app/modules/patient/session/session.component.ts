@@ -16,6 +16,7 @@ import {
 } from '../../../core/models/session.model';
 import { PatientSidebarComponent }
   from '../../../shared/components/patient-sidebar/patient-sidebar.component';
+import { RehabPlanService } from '../../../core/services/rehab-plan.service';
 
 type SessionPhase =
   'SELECT'       |
@@ -46,10 +47,11 @@ export class SessionComponent
   private authService     = inject(AuthService);
   private router          = inject(Router);
   private ngZone          = inject(NgZone);
-
+  private rehabPlanService = inject(RehabPlanService);
   // ══════════════════════════════════════════
   // SIGNAUX ÉTAT
   // ══════════════════════════════════════════
+  activePlanId = signal<string | null>(null);
   phase            = signal<SessionPhase>('SELECT');
   exercises        = signal<ExerciseResponse[]>([]);
   selectedEx       = signal<ExerciseResponse | null>(null);
@@ -148,9 +150,11 @@ export class SessionComponent
   private readonly HISTORY_SIZE = 5;
 
   // ── Speech ────────────────────────────────
+   // ── Speech ────────────────────────────────
   private readonly speech = window.speechSynthesis;
   private lastSpokenMsg = '';
   private lastSpeakTime = 0;
+  private lastVisibilityWarning = 0;   // ✅ Nouveau
 
   protected readonly Math = Math;
 
@@ -172,6 +176,7 @@ export class SessionComponent
   // ══════════════════════════════════════════
   ngOnInit(): void {
     this.loadExercises();
+      this.loadActivePlanId();
   }
 
   ngOnDestroy(): void {
@@ -269,37 +274,42 @@ loadExercises(): void {
       this.currentStep.update(s => s - 1);
     }
   }
+  private loadActivePlanId(): void {
+  this.rehabPlanService.getMyActivePlan().subscribe({
+    next: (plan) => this.activePlanId.set(plan.id),
+    error: () => this.activePlanId.set(null)
+  });
+}
 
   // ══════════════════════════════════════════
   // DÉMARRER SÉANCE
   // ══════════════════════════════════════════
   startSession(): void {
-    const ex = this.selectedEx();
-    if (!ex) return;
+  const ex = this.selectedEx();
+  if (!ex) return;
 
-    // ✅ Vérification précoce — l'exercice doit avoir
-    // une configuration MediaPipe valide
-    if (!this.isValidJointConfig(ex)) {
-      this.errorMsg.set(
-        'Cet exercice n\'a pas de configuration'
-        + ' MediaPipe valide. Contactez l\'administrateur.');
-      return;
-    }
-
-    this.sessionService.start({
-      exerciseId: ex.id
-    }).subscribe({
-      next: (session: SessionResponse) => {
-        this.currentSession.set(session);
-        this.currentStep.set(0);
-        this.phase.set('INSTRUCTIONS');
-      },
-      error: (err: { message: string }) => {
-        this.errorMsg.set(
-          err.message || 'Erreur démarrage séance');
-      }
-    });
+  if (!this.isValidJointConfig(ex)) {
+    this.errorMsg.set(
+      'Cet exercice n\'a pas de configuration'
+      + ' MediaPipe valide. Contactez l\'administrateur.');
+    return;
   }
+
+  this.sessionService.start({
+    exerciseId: ex.id,
+    planId: this.activePlanId()   // ✅ Ajout
+  }).subscribe({
+    next: (session: SessionResponse) => {
+      this.currentSession.set(session);
+      this.currentStep.set(0);
+      this.phase.set('INSTRUCTIONS');
+    },
+    error: (err: { message: string }) => {
+      this.errorMsg.set(
+        err.message || 'Erreur démarrage séance');
+    }
+  });
+}
 
   private isValidJointConfig(
     ex: ExerciseResponse
@@ -443,7 +453,7 @@ loadExercises(): void {
     return indices;
   }
 
-  // ══════════════════════════════════════════
+// ══════════════════════════════════════════
   // TRAITEMENT RÉSULTATS MEDIAPIPE
   // ══════════════════════════════════════════
   private processResults(results: any): void {
@@ -461,7 +471,7 @@ loadExercises(): void {
     const ex = this.selectedEx();
     if (!ex) return;
 
-    // ✅ Vérifier la configuration articulaire
+    // Vérifier la configuration articulaire
     // avant tout traitement
     const indices = this.getJointIndices();
     if (!indices) {
@@ -486,6 +496,38 @@ loadExercises(): void {
     // Phase séance — angle précis requis, calculé
     // sur l'articulation propre à CET exercice
     if (this.phase() === 'SESSION') {
+
+      // ✅ Vérification — l'articulation cible doit
+      // être réellement visible, pas juste une
+      // position devinée par MediaPipe
+      const jointsVisible = this.areTrackedJointsVisible(
+        results.poseLandmarks, indices);
+
+      if (!jointsVisible) {
+        this.feedback.set(
+          '⚠️ Articulation non visible — replacez-vous'
+          + ' face à la caméra');
+        this.isConformant.set(false);
+        this.drawFeedback(ctx, canvas, false);
+
+        // ✅ Reset de la machine à états — empêche
+        // un faux positif si le patient cache puis
+        // remontre l'articulation en plein mouvement
+        this.repPhase = 'NEUTRAL';
+        this.angleHistory = [];
+
+        // ✅ Alerte vocale anti-spam — un seul rappel
+        // toutes les 4 secondes
+        const now = Date.now();
+        if (now - this.lastVisibilityWarning > 4000) {
+          this.speak('Replacez-vous face à la caméra');
+          this.lastVisibilityWarning = now;
+        }
+
+        return; // Pas de calcul d'angle, pas de
+                // comptage de répétition
+      }
+
       const angle = this.calculateAngle(
         results.poseLandmarks, indices);
       const diff = Math.abs(angle - ex.targetAngle);
@@ -511,6 +553,30 @@ loadExercises(): void {
     return required.every(idx => {
       const lm = landmarks[idx];
       return lm && (lm.visibility ?? 1) > threshold;
+    });
+  }
+
+  // ══════════════════════════════════════════
+  // VÉRIFICATION VISIBILITÉ ARTICULATION CIBLE
+  // (phase SESSION uniquement)
+  // ══════════════════════════════════════════
+  // MediaPipe peut renvoyer des coordonnées
+  // "devinées" pour un point caché, avec une
+  // visibility très basse. Sans cette vérification,
+  // un angle serait calculé sur une position
+  // fictive et pourrait valider une répétition
+  // alors que l'articulation n'est pas réellement
+  // visible (genou caché, hors champ, occulté...).
+  private areTrackedJointsVisible(
+    landmarks: any[],
+    jointIndices: number[]
+  ): boolean {
+    const VISIBILITY_THRESHOLD = 0.6;
+
+    return jointIndices.every(idx => {
+      const lm = landmarks[idx];
+      return lm && (lm.visibility ?? 0)
+        >= VISIBILITY_THRESHOLD;
     });
   }
 

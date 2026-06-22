@@ -1,455 +1,929 @@
-<div class="min-h-screen bg-gradient-to-br from-slate-900
-            via-blue-950 to-slate-900 flex items-center
-            justify-center p-4">
+<div class="min-h-screen flex">
 
-  <div class="w-full max-w-lg">
+  <!-- ═══ PANNEAU GAUCHE — MARKETING ═══ -->
+  <div class="hidden lg:flex lg:w-1/2 relative
+              overflow-hidden bg-gradient-to-br
+              from-blue-50 via-indigo-50 to-blue-50">
 
-    <!-- Logo -->
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center
-                  w-16 h-16 bg-blue-600 rounded-2xl mb-4
-                  shadow-lg shadow-blue-500/30">
-        <svg class="w-8 h-8 text-white" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round"
-                stroke-linejoin="round" stroke-width="2"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12
-                   20.364l7.682-7.682a4.5 4.5 0
-                   00-6.364-6.364L12 7.636l-1.318-1.318a4.5
-                   4.5 0 00-6.364 0z"/>
-        </svg>
-      </div>
-      <h1 class="text-3xl font-bold text-white">KINEAI</h1>
-      <p class="text-slate-400 text-sm mt-1">
-        Créer votre compte
-      </p>
+    <div class="absolute top-10 left-10 w-32 h-32
+                rounded-full bg-blue-100 opacity-50">
     </div>
 
-    <!-- Card -->
-    <div class="bg-slate-800/50 backdrop-blur-sm border
-                border-slate-700/50 rounded-2xl p-8
-                shadow-2xl">
+    <div class="relative z-10 flex flex-col px-12
+                py-10 w-full">
 
-      <!-- Onglets -->
-      <div class="flex bg-slate-700/50 rounded-xl p-1 mb-6">
-        <button
-          type="button"
-          (click)="setTab('patient')"
-          class="flex-1 py-2.5 rounded-lg text-sm
-                 font-medium transition-all duration-200"
-          [class.bg-blue-600]="activeTab === 'patient'"
-          [class.text-white]="activeTab === 'patient'"
-          [class.text-slate-400]="activeTab !== 'patient'">
-          🧑‍⚕️ Patient
+      <!-- Logo -->
+      <div class="flex items-center gap-3 mb-10">
+        <img src="assets/images/logo.png"
+             alt="KINEAI"
+             class="w-12 h-12 rounded-xl object-cover"/>
+        <div>
+          <h1 class="text-xl font-black text-gray-900
+                     tracking-wide">
+            KINE<span class="text-blue-600">AI</span>
+          </h1>
+          <p class="text-xs text-gray-400">
+            Rééducation intelligente assistée par IA
+          </p>
+        </div>
+      </div>
+
+      <!-- Accroche -->
+      <h2 class="text-3xl font-bold text-gray-900
+                 leading-tight mb-3">
+        Votre rééducation,<br/>
+        <span class="text-blue-600">
+          notre intelligence
+        </span><br/>
+        au service de votre santé
+      </h2>
+      <p class="text-sm text-gray-500 mb-8 max-w-md">
+        KINEAI vous accompagne à chaque étape avec
+        des exercices personnalisés et un suivi
+        intelligent.
+      </p>
+
+      <!-- Bénéfices -->
+      <div class="flex flex-col gap-4 mb-10">
+
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 bg-blue-100
+                      rounded-xl flex items-center
+                      justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-blue-600"
+                 fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9.663 17h4.673M12 3v1m6.364
+                       1.636l-.707.707M21 12h-1M4
+                       12H3m3.343-5.657l-.707-.707m2.828
+                       9.9a5 5 0 117.072 0l-.548.547A3.374
+                       3.374 0 0014 18.469V19a2 2 0
+                       11-4 0v-.531c0-.895-.356-1.754
+                       -.988-2.386l-.548-.547z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-semibold
+                      text-gray-900">
+              Programmes intelligents
+            </p>
+            <p class="text-xs text-gray-500">
+              Des exercices adaptés à vos besoins
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 bg-blue-100
+                      rounded-xl flex items-center
+                      justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-blue-600"
+                 fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0
+                       00-2 2v6a2 2 0 002 2h2a2 2 0
+                       002-2zm0 0V9a2 2 0 012-2h2a2 2
+                       0 012 2v10m-6 0a2 2 0 002 2h2a2
+                       2 0 002-2m0 0V5a2 2 0 012-2h2a2
+                       2 0 012 2v14a2 2 0 01-2 2h-2a2
+                       2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-semibold
+                      text-gray-900">
+              Suivi en temps réel
+            </p>
+            <p class="text-xs text-gray-500">
+              Analyse de vos progrès en continu
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 bg-blue-100
+                      rounded-xl flex items-center
+                      justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-blue-600"
+                 fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955
+                       11.955 0 0112 2.944a11.955 11.955
+                       0 01-8.618 3.04A12.02 12.02 0
+                       003 9c0 5.591 3.824 10.29 9
+                       11.622 5.176-1.332 9-6.03 9
+                       -11.622 0-1.042-.133-2.052-.382
+                       -3.016z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-semibold
+                      text-gray-900">
+              Données sécurisées
+            </p>
+            <p class="text-xs text-gray-500">
+              Confidentialité et sécurité garanties
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Illustration + témoignage -->
+      <div class="relative mt-auto rounded-2xl
+                  overflow-hidden h-56 bg-gradient-to-br
+                  from-blue-100 to-indigo-100">
+        <div class="absolute inset-0 flex items-center
+                    justify-center text-6xl opacity-20">
+          🏋️‍♀️
+        </div>
+
+        <div class="absolute bottom-4 left-4 right-4
+                    bg-white rounded-xl p-4 shadow-lg">
+          <p class="text-blue-300 text-2xl leading-none
+                    mb-1">"</p>
+          <p class="text-xs text-gray-600 mb-3
+                    leading-relaxed">
+            Grâce à KINEAI, ma rééducation est plus
+            efficace et motivante.
+          </p>
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full
+                        bg-gradient-to-br from-blue-400
+                        to-indigo-600 flex items-center
+                        justify-center text-xs
+                        font-bold text-white">
+              Y
+            </div>
+            <div>
+              <p class="text-xs font-semibold
+                        text-gray-900">
+                Yassine B.
+              </p>
+              <p class="text-xs text-gray-400">
+                Patient
+              </p>
+            </div>
+            <div class="ml-auto text-amber-400 text-xs">
+              ★★★★★
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ PANNEAU DROIT — FORMULAIRE ═══ -->
+  <div class="flex-1 flex items-center justify-center
+              bg-gray-50 px-6 py-10 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-sm
+                border border-gray-100 p-8 w-full
+                max-w-lg">
+
+      <!-- Header -->
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900">
+          Créer votre compte
+        </h2>
+        <p class="text-sm text-gray-400 mt-1">
+          Rejoignez KINEAI et commencez votre parcours
+        </p>
+      </div>
+
+      <!-- Tabs Patient / Kiné -->
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <button type="button"
+                (click)="setTab('patient')"
+                class="flex items-center justify-center
+                       gap-2 py-3 rounded-xl border-2
+                       text-sm font-medium transition-all"
+                [class.border-blue-500]="
+                  activeTab==='patient'"
+                [class.bg-blue-50]="
+                  activeTab==='patient'"
+                [class.text-blue-700]="
+                  activeTab==='patient'"
+                [class.border-gray-200]="
+                  activeTab!=='patient'"
+                [class.text-gray-500]="
+                  activeTab!=='patient'">
+          <svg class="w-4 h-4" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round" stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0z
+                     M12 14a7 7 0 00-7 7h14a7 7 0
+                     00-7-7z"/>
+          </svg>
+          Patient
         </button>
-        <button
-          type="button"
-          (click)="setTab('kine')"
-          class="flex-1 py-2.5 rounded-lg text-sm
-                 font-medium transition-all duration-200"
-          [class.bg-blue-600]="activeTab === 'kine'"
-          [class.text-white]="activeTab === 'kine'"
-          [class.text-slate-400]="activeTab !== 'kine'">
-          👨‍⚕️ Kinésithérapeute
+        <button type="button"
+                (click)="setTab('kine')"
+                class="flex items-center justify-center
+                       gap-2 py-3 rounded-xl border-2
+                       text-sm font-medium transition-all"
+                [class.border-blue-500]="
+                  activeTab==='kine'"
+                [class.bg-blue-50]="
+                  activeTab==='kine'"
+                [class.text-blue-700]="
+                  activeTab==='kine'"
+                [class.border-gray-200]="
+                  activeTab!=='kine'"
+                [class.text-gray-500]="
+                  activeTab!=='kine'">
+          <svg class="w-4 h-4" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round" stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857
+                     M17 20H7m10 0v-2c0-.656-.126-1.283
+                     -.356-1.857M7 20H2v-2a3 3 0
+                     015.356-1.857M7 20v-2c0-.656.126
+                     -1.283.356-1.857m0 0a5.002 5.002
+                     0 019.288 0M15 7a3 3 0 11-6 0
+                     3 3 0 016 0z"/>
+          </svg>
+          Kinésithérapeute
         </button>
       </div>
 
-      <!-- Message erreur -->
       @if (errorMessage) {
-        <div class="flex items-center gap-3 bg-red-500/10
-                    border border-red-500/30 rounded-xl
-                    p-4 mb-5">
-          <svg class="w-5 h-5 text-red-400 shrink-0"
-               fill="none" viewBox="0 0 24 24"
-               stroke="currentColor">
+        <div class="flex items-center gap-2.5
+                    bg-red-50 border border-red-200
+                    rounded-xl px-4 py-3 mb-5">
+          <svg class="w-4 h-4 text-red-500
+                      flex-shrink-0" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round"
                   stroke-linejoin="round" stroke-width="2"
                   d="M12 8v4m0 4h.01M21 12a9 9 0
                      11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <p class="text-red-400 text-sm">
+          <p class="text-sm text-red-600">
             {{ errorMessage }}
           </p>
         </div>
       }
 
-      <!-- ═══ FORMULAIRE PATIENT ═══ -->
+      <!-- ═══════════ FORMULAIRE PATIENT ═══════════ -->
       @if (activeTab === 'patient') {
         <form [formGroup]="patientForm"
               (ngSubmit)="onSubmit()">
 
-          <!-- Nom complet -->
-          <div class="mb-4">
-            <label class="block text-sm font-medium
-                          text-slate-300 mb-2">
-              Nom complet
-            </label>
-            <input type="text"
-                   formControlName="fullName"
-                   placeholder="Mohammed Alami"
-                   class="w-full bg-slate-700/50 border
-                          border-slate-600 text-white
-                          placeholder-slate-400 rounded-xl
-                          px-4 py-3 text-sm outline-none
-                          transition-all focus:border-blue-500
-                          focus:ring-2 focus:ring-blue-500/20"
-                   [class.border-red-500]="pFullName?.invalid
-                     && pFullName?.touched"/>
-            @if (pFullName?.invalid && pFullName?.touched) {
-              <p class="text-red-400 text-xs mt-1">
-                Nom complet obligatoire (min 3 caractères)
-              </p>
-            }
-          </div>
+          <div class="flex flex-col gap-4">
 
-          <!-- Email -->
-          <div class="mb-4">
-            <label class="block text-sm font-medium
-                          text-slate-300 mb-2">
-              Email
-            </label>
-            <input type="email"
-                   formControlName="email"
-                   placeholder="patient@email.com"
-                   class="w-full bg-slate-700/50 border
-                          border-slate-600 text-white
-                          placeholder-slate-400 rounded-xl
-                          px-4 py-3 text-sm outline-none
-                          transition-all focus:border-blue-500
-                          focus:ring-2 focus:ring-blue-500/20"
-                   [class.border-red-500]="pEmail?.invalid
-                     && pEmail?.touched"/>
-            @if (pEmail?.invalid && pEmail?.touched) {
-              <p class="text-red-400 text-xs mt-1">
-                Email valide obligatoire
-              </p>
-            }
-          </div>
-
-          <!-- Mot de passe -->
-          <div class="mb-4">
-            <label class="block text-sm font-medium
-                          text-slate-300 mb-2">
-              Mot de passe
-            </label>
-            <div class="relative">
-              <input [type]="showPassword ? 'text' : 'password'"
-                     formControlName="password"
-                     placeholder="••••••••"
-                     class="w-full bg-slate-700/50 border
-                            border-slate-600 text-white
-                            placeholder-slate-400 rounded-xl
-                            px-4 py-3 pr-12 text-sm outline-none
-                            transition-all focus:border-blue-500
-                            focus:ring-2 focus:ring-blue-500/20"
-                     [class.border-red-500]="pPassword?.invalid
-                       && pPassword?.touched"/>
-              <button type="button"
-                      (click)="togglePassword()"
-                      class="absolute right-3 top-1/2
-                             -translate-y-1/2 text-slate-400
-                             hover:text-slate-200">
-                {{ showPassword ? '🙈' : '👁️' }}
-              </button>
-            </div>
-            @if (pPassword?.invalid && pPassword?.touched) {
-              <p class="text-red-400 text-xs mt-1">
-                Minimum 8 caractères
-              </p>
-            }
-          </div>
-
-          <!-- Age + Téléphone -->
-          <div class="grid grid-cols-2 gap-4 mb-4">
+            <!-- Nom complet -->
             <div>
-              <label class="block text-sm font-medium
-                            text-slate-300 mb-2">
-                Âge
+              <label class="block text-sm font-semibold
+                            text-gray-800 mb-1.5">
+                Nom complet
               </label>
-              <input type="number"
-                     formControlName="age"
-                     placeholder="25"
-                     class="w-full bg-slate-700/50 border
-                            border-slate-600 text-white
-                            placeholder-slate-400 rounded-xl
-                            px-4 py-3 text-sm outline-none
-                            transition-all focus:border-blue-500
-                            focus:ring-2 focus:ring-blue-500/20"
-                     [class.border-red-500]="pAge?.invalid
-                       && pAge?.touched"/>
-              @if (pAge?.invalid && pAge?.touched) {
-                <p class="text-red-400 text-xs mt-1">
-                  Âge invalide
+              <div class="relative">
+                <svg class="w-4 h-4 text-gray-400
+                            absolute left-3.5 top-1/2
+                            -translate-y-1/2" fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0
+                           018 0zM12 14a7 7 0 00-7
+                           7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <input type="text"
+                       formControlName="fullName"
+                       placeholder="Ex : Mohammed Alami"
+                       class="w-full pl-10 pr-4 py-2.5
+                              text-sm text-gray-900 border rounded-xl
+                              outline-none transition-colors
+                              placeholder-gray-400"
+                       [class.border-red-300]="
+                         pFullName?.invalid
+                         && pFullName?.touched"
+                       [class.border-gray-200]="
+                         !(pFullName?.invalid
+                         && pFullName?.touched)"
+                       [class.focus:border-blue-400]="true"/>
+              </div>
+              @if (pFullName?.invalid
+                   && pFullName?.touched) {
+                <p class="text-xs text-red-500 mt-1">
+                  Le nom doit contenir au moins
+                  3 caractères.
                 </p>
               }
             </div>
+
+            <!-- Email -->
             <div>
-              <label class="block text-sm font-medium
-                            text-slate-300 mb-2">
-                Téléphone
+              <label class="block text-sm font-semibold
+                            text-gray-800 mb-1.5">
+                Email
               </label>
-              <input type="tel"
-                     formControlName="phone"
-                     placeholder="0612345678"
-                     class="w-full bg-slate-700/50 border
-                            border-slate-600 text-white
-                            placeholder-slate-400 rounded-xl
-                            px-4 py-3 text-sm outline-none
-                            transition-all focus:border-blue-500
-                            focus:ring-2 focus:ring-blue-500/20"
-                     [class.border-red-500]="pPhone?.invalid
-                       && pPhone?.touched"/>
-              @if (pPhone?.invalid && pPhone?.touched) {
-                <p class="text-red-400 text-xs mt-1">
-                  10 chiffres requis
+              <div class="relative">
+                <svg class="w-4 h-4 text-gray-400
+                            absolute left-3.5 top-1/2
+                            -translate-y-1/2" fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22
+                           0L21 8M5 19h14a2 2 0 002-2V7a2
+                           2 0 00-2-2H5a2 2 0 00-2 2v10a2
+                           2 0 002 2z"/>
+                </svg>
+                <input type="email"
+                       formControlName="email"
+                       placeholder="Ex : patient@email.com"
+                       class="w-full pl-10 pr-4 py-2.5
+                              text-sm text-gray-900 border rounded-xl
+                              outline-none transition-colors
+                              placeholder:text-gray-400"
+                       [class.border-red-300]="
+                         pEmail?.invalid
+                         && pEmail?.touched"
+                       [class.border-gray-200]="
+                         !(pEmail?.invalid
+                         && pEmail?.touched)"/>
+              </div>
+              @if (pEmail?.invalid && pEmail?.touched) {
+                <p class="text-xs text-red-500 mt-1">
+                  Veuillez entrer une adresse email valide.
                 </p>
               }
             </div>
-          </div>
 
-          <!-- Pathologie -->
-          <div class="mb-4">
-            <label class="block text-sm font-medium
-                          text-slate-300 mb-2">
-              Pathologie
-            </label>
-            <select formControlName="pathology"
-                    class="w-full bg-slate-700/50 border
-                           border-slate-600 text-white
-                           rounded-xl px-4 py-3 text-sm
-                           outline-none transition-all
-                           focus:border-blue-500
-                           focus:ring-2 focus:ring-blue-500/20"
-                    [class.border-red-500]="pPathology?.invalid
-                      && pPathology?.touched">
-              <option value="" disabled selected
-                      class="bg-slate-800">
-                Sélectionner une pathologie
-              </option>
-              @for (p of pathologies; track p.value) {
-                <option [value]="p.value"
-                        class="bg-slate-800">
-                  {{ p.label }}
-                </option>
+            <!-- Mot de passe -->
+            <div>
+              <label class="block text-sm font-semibold
+                            text-gray-800 mb-1.5">
+                Mot de passe
+              </label>
+              <div class="relative">
+                <svg class="w-4 h-4 text-gray-400
+                            absolute left-3.5 top-1/2
+                            -translate-y-1/2" fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6
+                           a2 2 0 00-2-2H6a2 2 0 00-2 2v6
+                           a2 2 0 002 2zm10-10V7a4 4 0
+                           00-8 0v4h8z"/>
+                </svg>
+                <input [type]="showPassword
+                         ? 'text' : 'password'"
+                       formControlName="password"
+                       placeholder="••••••••••"
+                       class="w-full pl-10 pr-10 py-2.5
+                              text-sm text-gray-900 border rounded-xl
+                              outline-none transition-colors
+                              placeholder-gray-400"
+                       [class.border-red-300]="
+                         pPassword?.invalid
+                         && pPassword?.touched"
+                       [class.border-gray-200]="
+                         !(pPassword?.invalid
+                         && pPassword?.touched)"/>
+                <button type="button"
+                        (click)="togglePassword()"
+                        class="absolute right-3.5
+                               top-1/2 -translate-y-1/2
+                               text-gray-400
+                               hover:text-gray-600">
+                  @if (showPassword) {
+                    <svg class="w-4 h-4" fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                      <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M13.875 18.825A10.05
+                               10.05 0 0112 19c-4.478
+                               0-8.268-2.943-9.543-7a9.97
+                               9.97 0 011.563-3.029m5.858
+                               .908a3 3 0 114.243 4.243
+                               M9.878 9.878l4.242 4.242
+                               M9.88 9.88l-3.29-3.29m7.532
+                               7.532l3.29 3.29M3 3l3.59
+                               3.59m0 0A9.953 9.953 0
+                               0112 5c4.478 0 8.268 2.943
+                               9.542 7a10.025 10.025 0
+                               01-4.132 5.411m0 0L21 21"/>
+                    </svg>
+                  } @else {
+                    <svg class="w-4 h-4" fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                      <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0
+                               016 0zM2.458 12C3.732
+                               7.943 7.523 5 12 5c4.478
+                               0 8.268 2.943 9.542
+                               7-1.274 4.057-5.064
+                               7-9.542 7-4.477 0-8.268
+                               -2.943-9.542-7z"/>
+                    </svg>
+                  }
+                </button>
+              </div>
+              @if (pPassword?.invalid
+                   && pPassword?.touched) {
+                <p class="text-xs text-red-500 mt-1">
+                  Le mot de passe doit contenir au moins
+                  8 caractères.
+                </p>
               }
-            </select>
-          </div>
+              <!-- Indicateur 8 caractères minimum -->
+            <div class="flex items-center gap-1.5 mt-1.5">
+               <svg class="w-3.5 h-3.5 flex-shrink-0"
+                [class.text-green-500]="
+                (pPassword?.value?.length ?? 0) >= 8"
+       [class.text-gray-300]="
+         (pPassword?.value?.length ?? 0) < 8"
+       fill="none" viewBox="0 0 24 24"
+       stroke="currentColor">
+    <path stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.5"
+          d="M5 13l4 4L19 7"/>
+  </svg>
+  <span class="text-xs"
+        [class.text-green-600]="
+          (pPassword?.value?.length ?? 0) >= 8"
+        [class.text-gray-400]="
+          (pPassword?.value?.length ?? 0) < 8">
+    Au moins 8 caractères
+  </span>
+</div>
+            </div>
 
-          <!-- Kinésithérapeute -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium
-                          text-slate-300 mb-2">
-              Kinésithérapeute
-            </label>
-            <select formControlName="kineId"
-                    class="w-full bg-slate-700/50 border
-                           border-slate-600 text-white
-                           rounded-xl px-4 py-3 text-sm
-                           outline-none transition-all
-                           focus:border-blue-500
-                           focus:ring-2 focus:ring-blue-500/20"
-                    [class.border-red-500]="pKineId?.invalid
-                      && pKineId?.touched">
-              <option value="" disabled selected
-                      class="bg-slate-800">
-                Choisir votre kiné
-              </option>
-              @for (kine of kines; track kine.id) {
-                <option [value]="kine.id"
-                        class="bg-slate-800">
-                  Dr. {{ kine.fullName }}
-                  — {{ kine.speciality }}
+            <!-- Âge + Téléphone -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold
+                              text-gray-800 mb-1.5">
+                  Âge
+                </label>
+                <input type="number"
+                       formControlName="age"
+                       placeholder="Ex : 34"
+                       class="w-full px-4 py-2.5 text-sm
+                              text-gray-900 border rounded-xl
+                              outline-none transition-colors
+                              placeholder-gray-400"
+                       [class.border-red-300]="
+                         pAge?.invalid && pAge?.touched"
+                       [class.border-gray-200]="
+                         !(pAge?.invalid
+                         && pAge?.touched)"/>
+                @if (pAge?.invalid && pAge?.touched) {
+                  <p class="text-xs text-red-500 mt-1">
+                    Âge invalide.
+                  </p>
+                }
+              </div>
+              <div>
+                <label class="block text-sm font-semibold
+                              text-gray-800 mb-1.5">
+                  Téléphone
+                </label>
+                <input type="tel"
+                       formControlName="phone"
+                       placeholder="Ex : 0612345678"
+                       class="w-full px-4 py-2.5 text-sm
+                              text-gray-900 border rounded-xl
+                              outline-none transition-colors
+                              placeholder-gray-400"
+                       [class.border-red-300]="
+                         pPhone?.invalid
+                         && pPhone?.touched"
+                       [class.border-gray-200]="
+                         !(pPhone?.invalid
+                         && pPhone?.touched)"/>
+                @if (pPhone?.invalid && pPhone?.touched) {
+                  <p class="text-xs text-red-500 mt-1">
+                    10 chiffres requis.
+                  </p>
+                }
+              </div>
+            </div>
+
+            <!-- Pathologie -->
+            <div>
+              <label class="block text-sm font-semibold
+                            text-gray-800 mb-1.5">
+                Pathologie
+              </label>
+              <select formControlName="pathology"
+                      class="w-full px-4 py-2.5 text-sm
+                             border rounded-xl outline-none
+                             transition-colors text-gray-700"
+                      [class.border-red-300]="
+                        pPathology?.invalid
+                        && pPathology?.touched"
+                      [class.border-gray-200]="
+                        !(pPathology?.invalid
+                        && pPathology?.touched)">
+                <option value="">
+                  Sélectionnez votre pathologie
                 </option>
+                @for (p of pathologies; track p.value) {
+                  <option [value]="p.value">
+                    {{ p.label }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <!-- Kiné -->
+            <div>
+              <label class="block text-sm font-semibold
+                            text-gray-800 mb-1.5">
+                Votre kinésithérapeute
+              </label>
+              <select formControlName="kineId"
+                      class="w-full px-4 py-2.5 text-sm
+                             border rounded-xl outline-none
+                             transition-colors text-gray-700"
+                      [class.border-red-300]="
+                        pKineId?.invalid
+                        && pKineId?.touched"
+                      [class.border-gray-200]="
+                        !(pKineId?.invalid
+                        && pKineId?.touched)">
+                <option value="">
+                  Sélectionnez un kinésithérapeute
+                </option>
+                @for (kine of kines; track kine.id) {
+                  <option [value]="kine.id">
+                    Dr. {{ kine.fullName }} —
+                    {{ kine.speciality }}
+                  </option>
+                }
+              </select>
+              @if (kines.length === 0) {
+                <p class="text-xs text-amber-500 mt-1">
+                  Aucun kinésithérapeute validé
+                  disponible actuellement.
+                </p>
               }
-            </select>
-            @if (kines.length === 0) {
-              <p class="text-slate-400 text-xs mt-1">
-                Aucun kinésithérapeute disponible
-              </p>
-            }
+            </div>
+
           </div>
 
-          <!-- Bouton -->
+          <!-- Bouton soumission -->
           <button type="submit"
                   [disabled]="isLoading"
-                  class="w-full bg-blue-600 hover:bg-blue-500
-                         disabled:bg-slate-600
+                  class="w-full flex items-center
+                         justify-center gap-2 py-3
+                         bg-blue-600 hover:bg-blue-700
+                         disabled:bg-blue-400
                          disabled:cursor-not-allowed
-                         text-white font-semibold rounded-xl
-                         py-3 transition-all duration-200
-                         flex items-center justify-center gap-2">
+                         text-white text-sm font-semibold
+                         rounded-xl transition-colors
+                         shadow-sm mt-6">
             @if (isLoading) {
-              <svg class="w-5 h-5 animate-spin" fill="none"
-                   viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12"
-                        r="10" stroke="currentColor"
+              <svg class="w-4 h-4 animate-spin"
+                   fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12"
+                        cy="12" r="10"
+                        stroke="currentColor"
                         stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0
                          0 5.373 0 12h4z"/>
               </svg>
-              <span>Inscription en cours...</span>
+              Création en cours...
             } @else {
-              <span>Créer mon compte patient</span>
+              <svg class="w-4 h-4" fill="none"
+                   viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M18 9v3m0 0v3m0-3h3m-3 0h-3m
+                         -2-1a4 4 0 11-8 0 4 4 0
+                         018 0zM3 20a6 6 0 0112
+                         0v1H3v-1z"/>
+              </svg>
+              Créer mon compte
             }
           </button>
 
         </form>
       }
 
-      <!-- ═══ FORMULAIRE KINÉ ═══ -->
+      <!-- ═══════════ FORMULAIRE KINÉ ═══════════ -->
       @if (activeTab === 'kine') {
         <form [formGroup]="kineForm"
               (ngSubmit)="onSubmit()">
 
-          <!-- Nom complet -->
-          <div class="mb-4">
-            <label class="block text-sm font-medium
-                          text-slate-300 mb-2">
-              Nom complet
-            </label>
-            <input type="text"
-                   formControlName="fullName"
-                   placeholder="Dr. Mohammed Alami"
-                   class="w-full bg-slate-700/50 border
-                          border-slate-600 text-white
-                          placeholder-slate-400 rounded-xl
-                          px-4 py-3 text-sm outline-none
-                          transition-all focus:border-blue-500
-                          focus:ring-2 focus:ring-blue-500/20"
-                   [class.border-red-500]="kFullName?.invalid
-                     && kFullName?.touched"/>
-            @if (kFullName?.invalid && kFullName?.touched) {
-              <p class="text-red-400 text-xs mt-1">
-                Nom complet obligatoire
-              </p>
-            }
-          </div>
+          <div class="flex flex-col gap-4">
 
-          <!-- Email -->
-          <div class="mb-4">
-            <label class="block text-sm font-medium
-                          text-slate-300 mb-2">
-              Email professionnel
-            </label>
-            <input type="email"
-                   formControlName="email"
-                   placeholder="kine@clinique.ma"
-                   class="w-full bg-slate-700/50 border
-                          border-slate-600 text-white
-                          placeholder-slate-400 rounded-xl
-                          px-4 py-3 text-sm outline-none
-                          transition-all focus:border-blue-500
-                          focus:ring-2 focus:ring-blue-500/20"
-                   [class.border-red-500]="kEmail?.invalid
-                     && kEmail?.touched"/>
-            @if (kEmail?.invalid && kEmail?.touched) {
-              <p class="text-red-400 text-xs mt-1">
-                Email valide obligatoire
-              </p>
-            }
-          </div>
-
-          <!-- Mot de passe -->
-          <div class="mb-4">
-            <label class="block text-sm font-medium
-                          text-slate-300 mb-2">
-              Mot de passe
-            </label>
-            <div class="relative">
-              <input [type]="showPassword ? 'text' : 'password'"
-                     formControlName="password"
-                     placeholder="••••••••"
-                     class="w-full bg-slate-700/50 border
-                            border-slate-600 text-white
-                            placeholder-slate-400 rounded-xl
-                            px-4 py-3 pr-12 text-sm outline-none
-                            transition-all focus:border-blue-500
-                            focus:ring-2 focus:ring-blue-500/20"
-                     [class.border-red-500]="kPassword?.invalid
-                       && kPassword?.touched"/>
-              <button type="button"
-                      (click)="togglePassword()"
-                      class="absolute right-3 top-1/2
-                             -translate-y-1/2 text-slate-400
-                             hover:text-slate-200">
-                {{ showPassword ? '🙈' : '👁️' }}
-              </button>
-            </div>
-            @if (kPassword?.invalid && kPassword?.touched) {
-              <p class="text-red-400 text-xs mt-1">
-                Minimum 8 caractères
-              </p>
-            }
-          </div>
-
-          <!-- Spécialité -->
-          <div class="mb-4">
-            <label class="block text-sm font-medium
-                          text-slate-300 mb-2">
-              Spécialité
-            </label>
-            <select formControlName="speciality"
-                    class="w-full bg-slate-700/50 border
-                           border-slate-600 text-white
-                           rounded-xl px-4 py-3 text-sm
-                           outline-none transition-all
-                           focus:border-blue-500
-                           focus:ring-2 focus:ring-blue-500/20"
-                    [class.border-red-500]="kSpeciality?.invalid
-                      && kSpeciality?.touched">
-              <option value="" disabled selected
-                      class="bg-slate-800">
-                Votre spécialité
-              </option>
-              @for (s of specialities; track s) {
-                <option [value]="s" class="bg-slate-800">
-                  {{ s }}
-                </option>
+            <!-- Nom complet -->
+            <div>
+              <label class="block text-sm font-semibold
+                            text-gray-800 mb-1.5">
+                Nom complet
+              </label>
+              <div class="relative">
+                <svg class="w-4 h-4 text-gray-400
+                            absolute left-3.5 top-1/2
+                            -translate-y-1/2" fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0
+                           018 0zM12 14a7 7 0 00-7
+                           7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <input type="text"
+                       formControlName="fullName"
+                       placeholder="Ex : Karim Alaoui"
+                       class="w-full pl-10 pr-4 py-2.5
+                              text-sm text-gray-900 border rounded-xl
+                              outline-none transition-colors
+                              placeholder-gray-400"
+                       [class.border-red-300]="
+                         kFullName?.invalid
+                         && kFullName?.touched"
+                       [class.border-gray-200]="
+                         !(kFullName?.invalid
+                         && kFullName?.touched)"/>
+              </div>
+              @if (kFullName?.invalid
+                   && kFullName?.touched) {
+                <p class="text-xs text-red-500 mt-1">
+                  Le nom doit contenir au moins
+                  3 caractères.
+                </p>
               }
-            </select>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label class="block text-sm font-semibold
+                            text-gray-800 mb-1.5">
+                Email
+              </label>
+              <div class="relative">
+                <svg class="w-4 h-4 text-gray-400
+                            absolute left-3.5 top-1/2
+                            -translate-y-1/2" fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22
+                           0L21 8M5 19h14a2 2 0 002-2V7a2
+                           2 0 00-2-2H5a2 2 0 00-2 2v10a2
+                           2 0 002 2z"/>
+                </svg>
+                <input type="email"
+                       formControlName="email"
+                       placeholder="Ex : kine@email.com"
+                       class="w-full pl-10 pr-4 py-2.5
+                              text-sm text-gray-900 border rounded-xl
+                              outline-none transition-colors
+                              placeholder-gray-400"
+                       [class.border-red-300]="
+                         kEmail?.invalid
+                         && kEmail?.touched"
+                       [class.border-gray-200]="
+                         !(kEmail?.invalid
+                         && kEmail?.touched)"/>
+              </div>
+              @if (kEmail?.invalid && kEmail?.touched) {
+                <p class="text-xs text-red-500 mt-1">
+                  Veuillez entrer une adresse email valide.
+                </p>
+              }
+            </div>
+
+            <!-- Mot de passe -->
+            <div>
+              <label class="block text-sm font-semibold
+                            text-gray-800 mb-1.5">
+                Mot de passe
+              </label>
+              <div class="relative">
+                <svg class="w-4 h-4 text-gray-400
+                            absolute left-3.5 top-1/2
+                            -translate-y-1/2" fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6
+                           a2 2 0 00-2-2H6a2 2 0 00-2 2v6
+                           a2 2 0 002 2zm10-10V7a4 4 0
+                           00-8 0v4h8z"/>
+                </svg>
+                <input [type]="showPassword
+                         ? 'text' : 'password'"
+                       formControlName="password"
+                       placeholder="••••••••••"
+                       class="w-full pl-10 pr-10 py-2.5
+                              text-sm text-gray-900 border rounded-xl
+                              outline-none transition-colors
+                              placeholder-gray-400"
+                       [class.border-red-300]="
+                         kPassword?.invalid
+                         && kPassword?.touched"
+                       [class.border-gray-200]="
+                         !(kPassword?.invalid
+                         && kPassword?.touched)"/>
+                <button type="button"
+                        (click)="togglePassword()"
+                        class="absolute right-3.5
+                               top-1/2 -translate-y-1/2
+                               text-gray-400
+                               hover:text-gray-600">
+                  @if (showPassword) {
+                    <svg class="w-4 h-4" fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                      <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M13.875 18.825A10.05
+                               10.05 0 0112 19c-4.478
+                               0-8.268-2.943-9.543-7a9.97
+                               9.97 0 011.563-3.029m5.858
+                               .908a3 3 0 114.243 4.243
+                               M9.878 9.878l4.242 4.242
+                               M9.88 9.88l-3.29-3.29m7.532
+                               7.532l3.29 3.29M3 3l3.59
+                               3.59m0 0A9.953 9.953 0
+                               0112 5c4.478 0 8.268 2.943
+                               9.542 7a10.025 10.025 0
+                               01-4.132 5.411m0 0L21 21"/>
+                    </svg>
+                  } @else {
+                    <svg class="w-4 h-4" fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                      <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0
+                               016 0zM2.458 12C3.732
+                               7.943 7.523 5 12 5c4.478
+                               0 8.268 2.943 9.542
+                               7-1.274 4.057-5.064
+                               7-9.542 7-4.477 0-8.268
+                               -2.943-9.542-7z"/>
+                    </svg>
+                  }
+                </button>
+              </div>
+              @if (kPassword?.invalid
+                   && kPassword?.touched) {
+                <p class="text-xs text-red-500 mt-1">
+                  Le mot de passe doit contenir au moins
+                  8 caractères.
+                </p>
+              }
+              <!-- Indicateur 8 caractères minimum -->
+<div class="flex items-center gap-1.5 mt-1.5">
+  <svg class="w-3.5 h-3.5 flex-shrink-0"
+       [class.text-green-500]="
+         (kPassword?.value?.length ?? 0) >= 8"
+       [class.text-gray-300]="
+         (kPassword?.value?.length ?? 0) < 8"
+       fill="none" viewBox="0 0 24 24"
+       stroke="currentColor">
+    <path stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.5"
+          d="M5 13l4 4L19 7"/>
+  </svg>
+  <span class="text-xs"
+        [class.text-green-600]="
+          (kPassword?.value?.length ?? 0) >= 8"
+        [class.text-gray-400]="
+          (kPassword?.value?.length ?? 0) < 8">
+    Au moins 8 caractères
+  </span>
+</div>
+            </div>
+
+            <!-- Spécialité -->
+            <div>
+              <label class="block text-sm font-semibold
+                            text-gray-800 mb-1.5">
+                Spécialité
+              </label>
+              <select formControlName="speciality"
+                      class="w-full px-4 py-2.5 text-sm
+                             border rounded-xl outline-none
+                             transition-colors text-gray-700"
+                      [class.border-red-300]="
+                        kSpeciality?.invalid
+                        && kSpeciality?.touched"
+                      [class.border-gray-200]="
+                        !(kSpeciality?.invalid
+                        && kSpeciality?.touched)">
+                <option value="">
+                  Sélectionnez votre spécialité
+                </option>
+                @for (s of specialities; track s) {
+                  <option [value]="s">{{ s }}</option>
+                }
+              </select>
+              @if (kSpeciality?.invalid
+                   && kSpeciality?.touched) {
+                <p class="text-xs text-red-500 mt-1">
+                  Veuillez sélectionner une spécialité.
+                </p>
+              }
+            </div>
+
+            <!-- Note validation -->
+            <div class="flex items-start gap-2.5
+                        bg-amber-50 border
+                        border-amber-100 rounded-xl
+                        px-4 py-3">
+              <svg class="w-4 h-4 text-amber-500
+                          flex-shrink-0 mt-0.5"
+                   fill="none" viewBox="0 0 24 24"
+                   stroke="currentColor">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938
+                         4h13.856c1.54 0 2.502-1.667
+                         1.732-3L13.732 4c-.77-1.333
+                         -2.694-1.333-3.464 0L3.34
+                         16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <p class="text-xs text-amber-700
+                        leading-relaxed">
+                Votre compte devra être validé par
+                un administrateur avant de pouvoir
+                vous connecter.
+              </p>
+            </div>
+
           </div>
 
-          <!-- Note validation -->
-          <div class="flex items-start gap-3 bg-amber-500/10
-                      border border-amber-500/30 rounded-xl
-                      p-4 mb-6">
-            <svg class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"
-                 fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor">
-              <path stroke-linecap="round"
-                    stroke-linejoin="round" stroke-width="2"
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9
-                       0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <p class="text-amber-400 text-sm">
-              Votre compte sera activé après validation
-              par l'administrateur (RG-38)
-            </p>
-          </div>
-
-          <!-- Bouton -->
+          <!-- Bouton soumission -->
           <button type="submit"
                   [disabled]="isLoading"
-                  class="w-full bg-blue-600 hover:bg-blue-500
-                         disabled:bg-slate-600
+                  class="w-full flex items-center
+                         justify-center gap-2 py-3
+                         bg-blue-600 hover:bg-blue-700
+                         disabled:bg-blue-400
                          disabled:cursor-not-allowed
-                         text-white font-semibold rounded-xl
-                         py-3 transition-all duration-200
-                         flex items-center justify-center gap-2">
+                         text-white text-sm font-semibold
+                         rounded-xl transition-colors
+                         shadow-sm mt-6">
             @if (isLoading) {
-              <svg class="w-5 h-5 animate-spin" fill="none"
-                   viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12"
-                        r="10" stroke="currentColor"
+              <svg class="w-4 h-4 animate-spin"
+                   fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12"
+                        cy="12" r="10"
+                        stroke="currentColor"
                         stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0
                          0 5.373 0 12h4z"/>
               </svg>
-              <span>Inscription en cours...</span>
+              Création en cours...
             } @else {
-              <span>Créer mon compte kiné</span>
+              <svg class="w-4 h-4" fill="none"
+                   viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M18 9v3m0 0v3m0-3h3m-3 0h-3m
+                         -2-1a4 4 0 11-8 0 4 4 0
+                         018 0zM3 20a6 6 0 0112
+                         0v1H3v-1z"/>
+              </svg>
+              Créer mon compte
             }
           </button>
 
@@ -457,23 +931,17 @@
       }
 
       <!-- Lien login -->
-      <div class="mt-6 text-center">
-        <p class="text-slate-400 text-sm">
-          Déjà un compte ?
-          <a routerLink="/auth/login"
-             class="text-blue-400 hover:text-blue-300
-                    font-medium transition-colors">
-            Se connecter
-          </a>
-        </p>
-      </div>
+      <p class="text-center text-sm text-gray-500 mt-5">
+        Vous avez déjà un compte ?
+        <a routerLink="/auth/login"
+           class="text-blue-600 font-semibold
+                  hover:text-blue-700 transition-colors
+                  ml-1">
+          Se connecter
+        </a>
+      </p>
 
     </div>
-
-    <!-- Footer -->
-    <p class="text-center text-slate-500 text-xs mt-6">
-      © 2025 KINEAI — Tous droits réservés
-    </p>
-
   </div>
+
 </div>
