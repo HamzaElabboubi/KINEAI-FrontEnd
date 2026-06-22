@@ -14,6 +14,12 @@ export const kineRoutes: Routes = [
         .then(c => c.my_PatientComponent)
   },
   {
+    path: 'alerts',
+    loadComponent: () =>
+      import('./alerts/alerts.component')
+        .then(c => c.AlertsComponent)
+  },
+  {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full'

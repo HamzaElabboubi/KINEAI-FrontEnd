@@ -33,6 +33,12 @@ export class RehabPlanService {
       `${this.API}`, request);
   }
 
+  // ✅ Nouveau — plan actif du patient connecté
+  getMyActivePlan(): Observable<RehabPlanResponse> {
+    return this.http.get<RehabPlanResponse>(
+      `${this.API}/my/active`);
+    }
+    
   getActivePlan(
     patientId: string
   ): Observable<RehabPlanResponse> {

@@ -29,4 +29,11 @@ getMyPatients(): Observable<PatientResponse[]> {
   return this.http.get<PatientResponse[]>(
     `${this.API}/kine/patients`);
 }
+
+updateMyProfile(
+  request: { fullName: string; age: number }
+): Observable<PatientResponse> {
+  return this.http.put<PatientResponse>(
+    `${this.API}/patient/profile`, request);
+}
 }

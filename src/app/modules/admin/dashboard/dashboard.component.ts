@@ -35,6 +35,11 @@ export class DashboardComponent
 
   @ViewChild('pathologyChart')
   pathologyChartRef!: ElementRef<HTMLCanvasElement>;
+  
+  @ViewChild('specialityChart')
+   specialityChartRef!: ElementRef<HTMLCanvasElement>;
+
+  private specialityChart: Chart | null = null;
 
   private adminService = inject(AdminService);
   private authService  = inject(AuthService);
@@ -64,6 +69,7 @@ export class DashboardComponent
     this.chart?.destroy();
     this.levelChart?.destroy();
     this.pathologyChart?.destroy();
+    this.specialityChart?.destroy();
   }
 
   loadDashboard(): void {
@@ -88,6 +94,7 @@ export class DashboardComponent
           this.initChart();
           this.initLevelChart();
           this.initPathologyChart();
+          this.initSpecialityChart();
         }, 100);
       },
       error: () => {}
@@ -128,6 +135,54 @@ export class DashboardComponent
       }
     });
   }
+
+  // ── Kinés par spécialité (donut) ─────────────────
+private initSpecialityChart(): void {
+  if (!this.specialityChartRef?.nativeElement) return;
+  this.specialityChart?.destroy();
+
+  const data = this.stats()?.kinesBySpeciality ?? {};
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+
+  if (labels.length === 0) return;
+
+  this.specialityChart = new Chart(
+    this.specialityChartRef.nativeElement, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: [
+          'rgba(59, 130, 246, 0.85)',
+          'rgba(34, 197, 94, 0.85)',
+          'rgba(245, 158, 11, 0.85)',
+          'rgba(168, 85, 247, 0.85)',
+          'rgba(236, 72, 153, 0.85)',
+          'rgba(20, 184, 166, 0.85)'
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: { size: 11 },
+            padding: 10,
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
+        }
+      },
+      cutout: '65%'
+    }
+  });
+}
 
   private initLevelChart(): void {
     if (!this.levelChartRef?.nativeElement) return;
@@ -265,16 +320,16 @@ export class DashboardComponent
     });
   }
 
-  private refreshStatsOnly(): void {
-    this.adminService.getStats().subscribe({
-      next: (s: AdminStatsResponse) => {
-        this.stats.set(s);
-        setTimeout(() => {
-          this.initChart();
-          this.initLevelChart();
-          this.initPathologyChart();
-        }, 100);
-      }
-    });
-  }
-}
+ private refreshStatsOnly(): void {
+  this.adminService.getStats().subscribe({
+    next: (s: AdminStatsResponse) => {
+      this.stats.set(s);
+      setTimeout(() => {
+        this.initChart();
+        this.initLevelChart();
+        this.initPathologyChart();
+        this.initSpecialityChart();
+      }, 100);
+    }
+  });
+ }}

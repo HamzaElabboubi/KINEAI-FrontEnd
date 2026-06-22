@@ -34,7 +34,7 @@ export interface SessionResponse {
   exerciseName: string;
   startTime: string;
   endTime: string;
-  score: number;
+  score: number | null;
   repsCompleted: number;
   xpEarned: number;
   status: string;

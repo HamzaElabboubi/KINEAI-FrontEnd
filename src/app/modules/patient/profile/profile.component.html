@@ -2,18 +2,44 @@
 
   <app-patient-sidebar></app-patient-sidebar>
 
-  <div class="ml-52 flex-1 p-8">
+  <div class="ml-56 flex-1 px-8 py-6">
 
-    <h1 class="text-2xl font-bold text-gray-900 mb-1">
-      Mon profil
-    </h1>
-    <p class="text-gray-500 text-sm mb-6">
-      Votre dossier médical et informations personnelles
-    </p>
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">
+        Mon profil
+      </h1>
+      <p class="text-sm text-gray-400 mt-1">
+        Vos informations personnelles et votre suivi
+        de rééducation
+      </p>
+    </div>
+
+    @if (successMsg()) {
+      <div class="flex items-center gap-2 bg-green-50
+                  border border-green-200 rounded-xl
+                  p-3 mb-4 text-sm text-green-700">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0
+                   11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        {{ successMsg() }}
+      </div>
+    }
+    @if (errorMsg()) {
+      <div class="flex items-center gap-2 bg-red-50
+                  border border-red-200 rounded-xl
+                  p-3 mb-4 text-sm text-red-600">
+        {{ errorMsg() }}
+      </div>
+    }
 
     @if (isLoading()) {
       <div class="flex justify-center py-16">
-        <svg class="w-6 h-6 animate-spin text-blue-500"
+        <svg class="w-5 h-5 animate-spin text-blue-500"
              fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12"
                   r="10" stroke="currentColor"
@@ -26,79 +52,328 @@
     }
 
     @if (!isLoading() && profile()) {
-      <div class="grid grid-cols-3 gap-5 max-w-4xl">
+      <div class="grid grid-cols-3 gap-5">
 
-        <!-- Carte identité -->
-        <div class="col-span-1 bg-white border
-                    border-gray-200 rounded-2xl p-6
-                    text-center">
-          <div class="w-16 h-16 bg-blue-50 rounded-full
-                      flex items-center justify-center
-                      mx-auto mb-3 text-xl font-bold
-                      text-blue-600">
-            {{ profile()!.fullName.charAt(0) }}
-          </div>
-          <h3 class="font-bold text-gray-900">
-            {{ profile()!.fullName }}
-          </h3>
-          <p class="text-sm text-gray-400 mt-1">
-            {{ profile()!.age }} ans
-          </p>
-          <div class="mt-3 inline-flex items-center
-                      gap-1.5 bg-blue-50 text-blue-600
-                      text-xs font-medium px-3 py-1
-                      rounded-full">
-            {{ getLevelLabel(profile()!.level) }}
-          </div>
-        </div>
+        <!-- ═══ Colonne gauche — Identité ═══ -->
+        <div class="col-span-1 flex flex-col gap-5">
 
-        <!-- Carte dossier médical -->
-        <div class="col-span-2 bg-white border
-                    border-gray-200 rounded-2xl p-6">
-          <h3 class="text-sm font-bold text-gray-900
-                     mb-4">
-            Dossier médical
-          </h3>
+          <!-- Carte identité -->
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-6 text-center">
+            <div class="w-20 h-20 rounded-full
+                        bg-gradient-to-br from-blue-400
+                        to-indigo-600 flex items-center
+                        justify-center text-2xl
+                        font-bold text-white mx-auto
+                        mb-4">
+              {{ profile()!.fullName.charAt(0)
+                 .toUpperCase() }}
+            </div>
+            <h2 class="text-lg font-bold text-gray-900">
+              {{ profile()!.fullName }}
+            </h2>
+            <p class="text-sm text-gray-400 mt-0.5">
+              {{ profile()!.age }} ans
+            </p>
 
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-gray-50 rounded-xl p-4">
-              <p class="text-xs text-gray-400 mb-1">
-                Pathologie
-              </p>
-              <p class="text-sm font-semibold
-                        text-gray-800">
+            <div class="flex items-center justify-center
+                        gap-2 mt-4">
+              <span class="text-xs bg-blue-50
+                           text-blue-600 px-3 py-1
+                           rounded-full font-medium">
+                {{ getLevelLabel(profile()!.level) }}
+              </span>
+              <span class="text-xs bg-gray-50
+                           text-gray-600 px-3 py-1
+                           rounded-full font-medium">
                 {{ getPathologyLabel(
                    profile()!.pathology) }}
-              </p>
+              </span>
             </div>
-            <div class="bg-gray-50 rounded-xl p-4">
-              <p class="text-xs text-gray-400 mb-1">
-                Niveau actuel
-              </p>
-              <p class="text-sm font-semibold
-                        text-gray-800">
-                {{ getLevelLabel(profile()!.level) }}
-              </p>
-            </div>
-            <div class="bg-gray-50 rounded-xl p-4">
-              <p class="text-xs text-gray-400 mb-1">
+
+            <div class="border-t border-gray-100
+                        mt-5 pt-4">
+              <p class="text-xs text-gray-400">
                 Kinésithérapeute
               </p>
-              <p class="text-sm font-semibold
-                        text-gray-800">
+              <p class="text-sm font-medium
+                        text-gray-800 mt-0.5">
                 Dr. {{ profile()!.kineName }}
               </p>
             </div>
-            <div class="bg-amber-50 rounded-xl p-4">
-              <p class="text-xs text-amber-500 mb-1">
-                Points XP totaux
-              </p>
-              <p class="text-sm font-semibold
-                        text-amber-600">
-                {{ profile()!.totalXp }} XP
-              </p>
+          </div>
+
+          <!-- Statistiques clés -->
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-5">
+            <h3 class="text-sm font-semibold
+                       text-gray-900 mb-4">
+              Statistiques
+            </h3>
+            <div class="flex flex-col gap-3">
+
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-amber-50
+                            rounded-lg flex items-center
+                            justify-center">
+                  <span class="text-amber-500">⭐</span>
+                </div>
+                <div class="flex-1">
+                  <p class="text-xs text-gray-400">
+                    XP total
+                  </p>
+                </div>
+                <span class="text-sm font-bold
+                             text-gray-900">
+                  {{ profile()!.totalXp }}
+                </span>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-orange-50
+                            rounded-lg flex items-center
+                            justify-center">
+                  <span class="text-orange-500">🔥</span>
+                </div>
+                <div class="flex-1">
+                  <p class="text-xs text-gray-400">
+                    Streak actuel
+                  </p>
+                </div>
+                <span class="text-sm font-bold
+                             text-gray-900">
+                  {{ profile()!.streakCount }} jours
+                </span>
+              </div>
+
             </div>
           </div>
+
+        </div>
+
+        <!-- ═══ Colonne droite ═══ -->
+        <div class="col-span-2 flex flex-col gap-5">
+
+          <!-- Modifier mes infos -->
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-6">
+            <div class="flex items-center justify-between
+                        mb-4">
+              <h3 class="text-sm font-semibold
+                         text-gray-900">
+                Informations personnelles
+              </h3>
+              @if (!isEditing()) {
+                <button (click)="startEdit()"
+                        class="text-xs font-medium
+                               text-blue-600 border
+                               border-blue-200 px-3
+                               py-1.5 rounded-lg
+                               hover:bg-blue-50
+                               transition-colors">
+                  Modifier
+                </button>
+              }
+            </div>
+
+            @if (!isEditing()) {
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 rounded-xl p-4">
+                  <p class="text-xs text-gray-400
+                            mb-1">
+                    Nom complet
+                  </p>
+                  <p class="text-sm font-medium
+                            text-gray-800">
+                    {{ profile()!.fullName }}
+                  </p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-4">
+                  <p class="text-xs text-gray-400
+                            mb-1">
+                    Âge
+                  </p>
+                  <p class="text-sm font-medium
+                            text-gray-800">
+                    {{ profile()!.age }} ans
+                  </p>
+                </div>
+              </div>
+            } @else {
+              <form [formGroup]="editForm"
+                    (ngSubmit)="saveProfile()">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label class="block text-xs
+                                  font-medium
+                                  text-gray-600 mb-1.5">
+                      Nom complet
+                    </label>
+                    <input type="text"
+                           formControlName="fullName"
+                           class="w-full px-3 py-2.5
+                                  text-sm border
+                                  border-gray-200
+                                  rounded-xl outline-none
+                                  focus:border-blue-400
+                                  transition-colors"/>
+                    @if (editForm.get('fullName')
+                         ?.invalid
+                         && editForm.get('fullName')
+                         ?.touched) {
+                      <p class="text-xs text-red-500
+                                mt-1">
+                        Le nom doit contenir au moins
+                        2 caractères.
+                      </p>
+                    }
+                  </div>
+                  <div>
+                    <label class="block text-xs
+                                  font-medium
+                                  text-gray-600 mb-1.5">
+                      Âge
+                    </label>
+                    <input type="number"
+                           formControlName="age"
+                           class="w-full px-3 py-2.5
+                                  text-sm border
+                                  border-gray-200
+                                  rounded-xl outline-none
+                                  focus:border-blue-400
+                                  transition-colors"/>
+                    @if (editForm.get('age')?.invalid
+                         && editForm.get('age')
+                         ?.touched) {
+                      <p class="text-xs text-red-500
+                                mt-1">
+                        Âge invalide (1-120 ans).
+                      </p>
+                    }
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                  <button type="button"
+                          (click)="cancelEdit()"
+                          class="px-4 py-2 text-sm
+                                 text-gray-600 border
+                                 border-gray-200
+                                 rounded-xl
+                                 hover:bg-gray-50
+                                 transition-colors">
+                    Annuler
+                  </button>
+                  <button type="submit"
+                          [disabled]="isSaving()"
+                          class="flex items-center
+                                 gap-2 px-5 py-2
+                                 bg-blue-600
+                                 hover:bg-blue-700
+                                 disabled:bg-blue-400
+                                 text-white text-sm
+                                 font-medium rounded-xl
+                                 transition-colors">
+                    @if (isSaving()) {
+                      <svg class="w-4 h-4 animate-spin"
+                           fill="none"
+                           viewBox="0 0 24 24">
+                        <circle class="opacity-25"
+                                cx="12" cy="12" r="10"
+                                stroke="currentColor"
+                                stroke-width="4"/>
+                        <path class="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0
+                                 018-8V0C5.373 0
+                                 0 5.373 0 12h4z"/>
+                      </svg>
+                      Enregistrement...
+                    } @else {
+                      Enregistrer
+                    }
+                  </button>
+                </div>
+              </form>
+            }
+          </div>
+
+          <!-- Plan de rééducation actif -->
+          <div class="bg-white border border-gray-100
+                      rounded-2xl p-6">
+            <h3 class="text-sm font-semibold
+                       text-gray-900 mb-4">
+              Plan de rééducation actif
+            </h3>
+
+            @if (activePlan()) {
+              <div class="bg-blue-50 rounded-xl p-4">
+                <div class="flex items-center
+                            justify-between mb-3">
+                  <span class="text-sm font-semibold
+                               text-blue-700">
+                    Semaine {{ activePlan()!.currentWeek }}
+                    / 4
+                  </span>
+                  <span class="text-xs bg-white
+                               text-blue-600 px-2.5
+                               py-1 rounded-full
+                               font-medium">
+                    {{ getLevelLabel(
+                       activePlan()!.difficultyLevel) }}
+                  </span>
+                </div>
+
+                <div class="w-full bg-white rounded-full
+                            h-2 mb-3">
+                  <div class="bg-blue-600 h-2
+                              rounded-full
+                              transition-all"
+                       [style.width.%]="
+                         (activePlan()!.currentWeek
+                          / 4) * 100">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3
+                            text-xs">
+                  <div>
+                    <p class="text-blue-400">
+                      Date de début
+                    </p>
+                    <p class="font-medium text-blue-700
+                              mt-0.5">
+                      {{ activePlan()!.startDate
+                         | date:'dd/MM/yyyy' }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-blue-400">
+                      Date de fin prévue
+                    </p>
+                    <p class="font-medium text-blue-700
+                              mt-0.5">
+                      {{ activePlan()!.endDate
+                         | date:'dd/MM/yyyy' }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            } @else {
+              <div class="flex flex-col items-center
+                          justify-center py-8 text-center">
+                <div class="text-3xl mb-2">📋</div>
+                <p class="text-sm text-gray-500">
+                  Aucun plan actif pour le moment
+                </p>
+                <p class="text-xs text-gray-400 mt-1">
+                  Contactez votre kinésithérapeute pour
+                  démarrer un programme
+                </p>
+              </div>
+            }
+          </div>
+
         </div>
 
       </div>

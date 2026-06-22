@@ -19,12 +19,12 @@ export const patientRoutes: Routes = [
       import('./progress/progress.component')
         .then(c => c.ProgressComponent)
   },
-  /* {
+   {
     path: 'messages',
     loadComponent: () =>
       import('./messages/messages.component')
         .then(c => c.MessagesComponent)
-  },*/
+  },
   {
     path: 'profile',
     loadComponent: () =>

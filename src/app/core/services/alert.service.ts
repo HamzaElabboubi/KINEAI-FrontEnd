@@ -38,4 +38,9 @@ export class AlertService {
     return this.http.get<number>(
       `${this.API}/pending/count`);
   }
+
+  getMyAlertsAsPatient(): Observable<AlertResponse[]> {
+  return this.http.get<AlertResponse[]>(
+    `${this.API}/my-patient`);
+}
 }

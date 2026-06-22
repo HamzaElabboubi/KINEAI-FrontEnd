@@ -20,6 +20,7 @@ export interface AdminStatsResponse {
   pendingKines: number;
   patientsByLevel: Record<string, number>;
   patientsByPathology: Record<string, number>;
+  kinesBySpeciality: Record<string, number>;
 }
 
 @Injectable({
