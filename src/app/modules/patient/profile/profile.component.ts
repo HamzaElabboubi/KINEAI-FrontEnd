@@ -27,6 +27,7 @@ import { PatientSidebarComponent }
 })
 export class ProfileComponent implements OnInit {
 
+  protected readonly Math = Math;
   private patientService  = inject(PatientService);
   private rehabPlanService = inject(RehabPlanService);
   private fb = inject(FormBuilder);

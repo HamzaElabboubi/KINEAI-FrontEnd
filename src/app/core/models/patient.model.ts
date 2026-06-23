@@ -8,6 +8,7 @@ export interface PatientResponse {
   totalXp: number;
   kineName: string;
   kineId: string;
+  isActive: boolean;
 }
 
 export interface RehabPlanResponse {
@@ -27,6 +28,7 @@ export interface SessionResponse {
   repsCompleted: number;
   xpEarned: number;
   sessionStatus: string;
+  status: string;
 }
 
 export interface BadgeResponse {

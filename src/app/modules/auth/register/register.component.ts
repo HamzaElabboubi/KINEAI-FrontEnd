@@ -151,7 +151,7 @@ export class RegisterComponent implements OnInit {
       .subscribe({
         next: (_: AuthResponse) => {
           this.isLoading = false;
-          this.router.navigate(['/patient/dashboard']);
+          this.router.navigate(['/auth/login']);
         },
         error: (err: { message: string; status: number }) => {
           this.isLoading    = false;

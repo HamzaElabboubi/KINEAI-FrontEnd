@@ -58,12 +58,27 @@ export class DashboardComponent
     this.skillsChart?.destroy();
   }
 
-  loadDashboard(): void {
+  loadDashboard(retry = true): void {
     this.isLoading.set(true);
     this.errorMsg.set('');
 
     this.patientService.getMyDashboard().subscribe({
       next: (data: DashboardPatientResponse) => {
+        // ✅ Le backend répond parfois 200 avec un corps
+        // vide juste après la complétion d'une séance
+        // (recalcul des stats pas encore disponible) —
+        // on retente une fois avant d'abandonner.
+        if (!data) {
+          if (retry) {
+            setTimeout(() => this.loadDashboard(false), 600);
+            return;
+          }
+          this.errorMsg.set(
+            'Impossible de charger vos statistiques.'
+            + ' Veuillez réessayer dans quelques instants.');
+          this.isLoading.set(false);
+          return;
+        }
         this.dashboard.set(data);
         this.isLoading.set(false);
         setTimeout(() => {
@@ -79,67 +94,68 @@ export class DashboardComponent
   }
 
   // ── Graphique progression — 7 derniers jours ──
-  private initProgressChart(): void {
-    if (!this.progressChartRef?.nativeElement) return;
-    this.progressChart?.destroy();
+ private initProgressChart(): void {
+  if (!this.progressChartRef?.nativeElement) return;
+  this.progressChart?.destroy();
 
-    const sessions = this.dashboard()
-      ?.recentSessions ?? [];
+  const sessions = (this.dashboard()
+    ?.recentSessions ?? [])
+    .filter(s => s.status === 'COMPLETED')
+    .sort((a, b) =>
+      new Date(a.startTime).getTime()
+      - new Date(b.startTime).getTime());
 
-    // Construire les 7 derniers jours
-    const days: string[] = [];
-    const scores: number[] = [];
-    const dayLabels = ['Dim','Lun','Mar','Mer',
-      'Jeu','Ven','Sam'];
+  // ✅ Affiche les VRAIES séances complétées,
+  // pas une grille de 7 jours civils dont la
+  // majorité serait vide par construction
+  const labels = sessions.map(s =>
+    new Date(s.startTime).toLocaleDateString(
+      'fr-FR', { day: '2-digit', month: '2-digit' }));
+  const scores = sessions.map(s =>
+    Number(s.score ?? 0));
 
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      days.push(dayLabels[d.getDay()]);
+  if (sessions.length === 0) {
+    // Pas de séance du tout — on ne dessine rien,
+    // un message dédié prend le relais (voir HTML)
+    return;
+  }
 
-      const daySession = sessions.find(s => {
-        const sd = new Date(s.startTime);
-        return sd.toDateString() === d.toDateString();
-      });
-      scores.push(daySession?.score ?? 0);
-    }
-
-    this.progressChart = new Chart(
-      this.progressChartRef.nativeElement, {
-      type: 'line',
-      data: {
-        labels: days,
-        datasets: [{
-          data: scores,
-          borderColor: 'rgb(59, 130, 246)',
-          backgroundColor: 'rgba(59, 130, 246, 0.08)',
-          borderWidth: 2.5,
-          fill: true,
-          tension: 0.4,
-          pointRadius: 4,
-          pointBackgroundColor: 'rgb(59, 130, 246)',
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: {
-            min: 0, max: 100,
-            grid: { color: '#f3f4f6' },
-            ticks: { color: '#9ca3af', font: { size: 11 } }
-          },
-          x: {
-            grid: { display: false },
-            ticks: { color: '#9ca3af', font: { size: 11 } }
-          }
+  this.progressChart = new Chart(
+    this.progressChartRef.nativeElement, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: scores,
+        borderColor: 'rgb(59, 130, 246)',
+        backgroundColor: 'rgba(59, 130, 246, 0.08)',
+        borderWidth: 2.5,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: 'rgb(59, 130, 246)',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          min: 0, max: 100,
+          grid: { color: '#f3f4f6' },
+          ticks: { color: '#9ca3af', font: { size: 11 } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#9ca3af', font: { size: 11 } }
         }
       }
-    });
-  }
+    }
+  });
+}
 
   // ── Donut répartition zones travaillées ────────
   private initSkillsChart(): void {

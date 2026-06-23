@@ -99,7 +99,8 @@ export class PatientsComponent implements OnInit {
         this.successMsg.set(
           `${name} archivé avec succès`);
         this.allPatients.update(list =>
-          list.filter(p => p.id !== id));
+          list.map(p => p.id === id
+            ? { ...p, isActive: false } : p));
         this.confirmArchiveId.set(null);
         setTimeout(() => this.successMsg.set(''), 3000);
       },
@@ -108,6 +109,24 @@ export class PatientsComponent implements OnInit {
           err.message
           || 'Erreur lors de l\'archivage');
         this.confirmArchiveId.set(null);
+      }
+    });
+  }
+
+  reactivate(id: string, name: string): void {
+    this.adminService.reactivatePatient(id).subscribe({
+      next: () => {
+        this.successMsg.set(
+          `${name} réactivé avec succès`);
+        this.allPatients.update(list =>
+          list.map(p => p.id === id
+            ? { ...p, isActive: true } : p));
+        setTimeout(() => this.successMsg.set(''), 3000);
+      },
+      error: (err: { message: string }) => {
+        this.errorMsg.set(
+          err.message
+          || 'Erreur lors de la réactivation');
       }
     });
   }

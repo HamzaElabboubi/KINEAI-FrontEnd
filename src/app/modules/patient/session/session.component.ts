@@ -197,11 +197,11 @@ loadExercises(): void {
           + ' Contactez votre kinésithérapeute.');
       }
     },
-    error: (err: { error?: { message?: string } }) => {
+    error: (err: { message?: string }) => {
       // ✅ Le backend renvoie maintenant un message
       // clair si aucun plan actif n'existe
       this.errorMsg.set(
-        err.error?.message
+        err.message
         || 'Impossible de charger vos exercices.'
            + ' Contactez votre kinésithérapeute.');
     }
@@ -310,6 +310,14 @@ loadExercises(): void {
     }
   });
 }
+
+getToleranceLabel(toleranceDeg: number | undefined): string {
+  if (!toleranceDeg) return 'Précision modérée';
+  if (toleranceDeg >= 15) return 'Mouvement souple accepté';
+  if (toleranceDeg >= 8) return 'Précision modérée requise';
+  return 'Mouvement précis demandé';
+}
+
 
   private isValidJointConfig(
     ex: ExerciseResponse
