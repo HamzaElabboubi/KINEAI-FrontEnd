@@ -39,6 +39,8 @@ export class DashboardComponent
   dashboard = signal<DashboardPatientResponse | null>(null);
   isLoading = signal<boolean>(false);
   errorMsg  = signal<string>('');
+  levelUpInfo = signal<
+    { previous: string; current: string } | null>(null);
 
   private progressChart: Chart | null = null;
   private skillsChart: Chart | null = null;
@@ -81,6 +83,7 @@ export class DashboardComponent
         }
         this.dashboard.set(data);
         this.isLoading.set(false);
+        this.checkLevelChange(data.profile.id, data.profile.level);
         setTimeout(() => {
           this.initProgressChart();
           this.initSkillsChart();
@@ -198,6 +201,14 @@ export class DashboardComponent
     return labels[p] || p;
   }
 
+  getPathologyIcon(p: string): string {
+    const icons: Record<string, string> = {
+      'GENOU': '🦵', 'EPAULE': '💪',
+      'DOS': '🧍', 'HANCHE': '🦴', 'COUDE': '🤳'
+    };
+    return icons[p] || '🩺';
+  }
+
   getLevelLabel(l: string): string {
     const labels: Record<string, string> = {
       'DEBUTANT': 'Débutant',
@@ -205,6 +216,29 @@ export class DashboardComponent
       'AVANCE': 'Avancé'
     };
     return labels[l] || l;
+  }
+
+  getLevelConfig(l: string):
+    { color: string; bg: string; dot: string; dots: number } {
+    const config: Record<string,
+      { color: string; bg: string; dot: string; dots: number }> = {
+      'DEBUTANT': {
+        color: 'text-emerald-600', bg: 'bg-emerald-50',
+        dot: 'bg-emerald-500', dots: 1
+      },
+      'INTERMEDIAIRE': {
+        color: 'text-amber-600', bg: 'bg-amber-50',
+        dot: 'bg-amber-500', dots: 2
+      },
+      'AVANCE': {
+        color: 'text-rose-600', bg: 'bg-rose-50',
+        dot: 'bg-rose-500', dots: 3
+      }
+    };
+    return config[l] || {
+      color: 'text-gray-600', bg: 'bg-gray-50',
+      dot: 'bg-gray-400', dots: 1
+    };
   }
 
   getStatusLabel(s: string): string {
@@ -218,5 +252,48 @@ export class DashboardComponent
 
   startSession(): void {
     this.router.navigate(['/patient/session']);
+  }
+
+  // ── Bandeau "changement de niveau" ─────────────
+  // Le niveau du patient (DEBUTANT/INTERMEDIAIRE/AVANCE)
+  // est recalculé côté backend après les séances, mais
+  // rien n'avertit le patient quand il change. On compare
+  // donc le niveau actuel au dernier niveau "vu" (stocké
+  // en localStorage) et on affiche un bandeau jusqu'à ce
+  // que le patient le ferme.
+  private levelStorageKey(patientId: string): string {
+    return `kineai_last_seen_level_${patientId}`;
+  }
+
+  private checkLevelChange(
+    patientId: string, currentLevel: string
+  ): void {
+    const key = this.levelStorageKey(patientId);
+    const lastSeenLevel = localStorage.getItem(key);
+
+    if (!lastSeenLevel) {
+      // Première visite connue sur cet appareil —
+      // on enregistre sans afficher de bandeau pour
+      // éviter un faux "changement de niveau".
+      localStorage.setItem(key, currentLevel);
+      return;
+    }
+
+    if (lastSeenLevel !== currentLevel) {
+      this.levelUpInfo.set({
+        previous: lastSeenLevel,
+        current: currentLevel
+      });
+    }
+  }
+
+  dismissLevelUp(): void {
+    const profile = this.dashboard()?.profile;
+    const info = this.levelUpInfo();
+    if (profile && info) {
+      localStorage.setItem(
+        this.levelStorageKey(profile.id), info.current);
+    }
+    this.levelUpInfo.set(null);
   }
 }

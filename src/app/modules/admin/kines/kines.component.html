@@ -199,7 +199,14 @@
               </div>
 
               <div class="text-center">
-                @if (kine.validated) {
+                @if (!kine.validated) {
+                  <span class="text-xs bg-amber-50
+                               text-amber-600 px-2.5
+                               py-1 rounded-full
+                               font-medium">
+                    En attente
+                  </span>
+                } @else if (kine.active) {
                   <span class="text-xs bg-green-50
                                text-green-600 px-2.5
                                py-1 rounded-full
@@ -207,11 +214,11 @@
                     Validé
                   </span>
                 } @else {
-                  <span class="text-xs bg-amber-50
-                               text-amber-600 px-2.5
+                  <span class="text-xs bg-gray-100
+                               text-gray-500 px-2.5
                                py-1 rounded-full
                                font-medium">
-                    En attente
+                    Désactivé
                   </span>
                 }
               </div>
@@ -242,6 +249,31 @@
                     Rejeter
                   </button>
                 } @else {
+                  @if (kine.active) {
+                    <button
+                      (click)="askDeactivate(kine.id,
+                                kine.fullName)"
+                      class="text-xs font-medium
+                             text-orange-600 border
+                             border-orange-200 bg-orange-50
+                             px-2.5 py-1.5 rounded-lg
+                             hover:bg-orange-100
+                             transition-colors">
+                      Désactiver
+                    </button>
+                  } @else {
+                    <button
+                      (click)="activateKine(kine.id,
+                                kine.fullName)"
+                      class="text-xs font-medium
+                             text-green-600 border
+                             border-green-200 bg-green-50
+                             px-2.5 py-1.5 rounded-lg
+                             hover:bg-green-100
+                             transition-colors">
+                      Activer
+                    </button>
+                  }
                   <button
                     (click)="askDelete(kine.id)"
                     class="text-xs font-medium
@@ -262,6 +294,57 @@
     </div>
 
   </div>
+
+  <!-- Modale confirmation désactivation -->
+  @if (confirmDeactivateId()) {
+    <div class="fixed inset-0 bg-black/40
+                flex items-center justify-center
+                z-50 px-4">
+      <div class="bg-white rounded-2xl p-6
+                  max-w-sm w-full">
+        <div class="w-10 h-10 bg-orange-50 rounded-full
+                    flex items-center justify-center
+                    mb-3">
+          <svg class="w-5 h-5 text-orange-500" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856
+                     c1.54 0 2.502-1.667 1.732-3L13.732
+                     4c-.77-1.333-2.694-1.333-3.464
+                     0L3.34 16c-.77 1.333.192 3
+                     1.732 3z"/>
+          </svg>
+        </div>
+        <h3 class="text-base font-semibold
+                   text-gray-900 mb-1">
+          Désactiver ce kinésithérapeute ?
+        </h3>
+        <p class="text-sm text-gray-500 mb-5">
+          Dr. {{ confirmDeactivateName() }} ne pourra
+          plus se connecter à la plateforme jusqu'à
+          sa réactivation. Ses données sont conservées.
+        </p>
+        <div class="flex items-center gap-3">
+          <button (click)="cancelDeactivate()"
+                  class="flex-1 px-4 py-2 text-sm
+                         text-gray-600 border
+                         border-gray-200 rounded-xl
+                         hover:bg-gray-50
+                         transition-colors">
+            Annuler
+          </button>
+          <button (click)="confirmDeactivate()"
+                  class="flex-1 px-4 py-2 text-sm
+                         font-medium text-white
+                         bg-orange-500 hover:bg-orange-600
+                         rounded-xl transition-colors">
+            Désactiver
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- Modale confirmation suppression -->
   @if (confirmDeleteId()) {

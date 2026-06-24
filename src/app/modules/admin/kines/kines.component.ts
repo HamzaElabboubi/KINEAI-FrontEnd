@@ -27,7 +27,13 @@ export class KinesComponent implements OnInit {
   errorMsg    = signal<string>('');
   searchQuery = signal<string>('');
   activeTab   = signal<FilterTab>('ALL');
+
+  // ── Modale suppression ────────────────────
   confirmDeleteId = signal<string | null>(null);
+
+  // ── Modale désactivation ──────────────────
+  confirmDeactivateId   = signal<string | null>(null);
+  confirmDeactivateName = signal<string>('');
 
   get pendingCount(): number {
     return this.allKines().filter(k => !k.validated).length;
@@ -66,7 +72,7 @@ export class KinesComponent implements OnInit {
         this.allKines.set(kines);
         this.isLoading.set(false);
       },
-      error: (err: { message: string }) => {
+      error: (err: { message?: string }) => {
         this.errorMsg.set(err.message || 'Erreur');
         this.isLoading.set(false);
       }
@@ -82,6 +88,9 @@ export class KinesComponent implements OnInit {
     this.searchQuery.set(input.value);
   }
 
+  // ══════════════════════════════════════════
+  // VALIDATION / REJET (kinés en attente)
+  // ══════════════════════════════════════════
   validateKine(id: string, name: string): void {
     this.adminService.validateKine(id).subscribe({
       next: () => {
@@ -89,10 +98,11 @@ export class KinesComponent implements OnInit {
           `Dr. ${name} validé avec succès`);
         this.allKines.update(list =>
           list.map(k => k.id === id
-            ? { ...k, validated: true } : k));
+            ? { ...k, validated: true, active: true }
+            : k));
         setTimeout(() => this.successMsg.set(''), 3000);
       },
-      error: (err: { message: string }) => {
+      error: (err: { message?: string }) => {
         this.errorMsg.set(
           err.message || 'Erreur lors de la validation');
       }
@@ -107,13 +117,70 @@ export class KinesComponent implements OnInit {
           list.filter(k => k.id !== id));
         setTimeout(() => this.successMsg.set(''), 3000);
       },
-      error: (err: { message: string }) => {
+      error: (err: { message?: string }) => {
         this.errorMsg.set(
           err.message || 'Erreur lors du rejet');
       }
     });
   }
 
+  // ══════════════════════════════════════════
+  // DÉSACTIVATION / RÉACTIVATION (kinés validés)
+  // ══════════════════════════════════════════
+  askDeactivate(id: string, name: string): void {
+    this.confirmDeactivateId.set(id);
+    this.confirmDeactivateName.set(name);
+  }
+
+  cancelDeactivate(): void {
+    this.confirmDeactivateId.set(null);
+    this.confirmDeactivateName.set('');
+  }
+
+  confirmDeactivate(): void {
+    const id = this.confirmDeactivateId();
+    const name = this.confirmDeactivateName();
+    if (!id) return;
+
+    this.adminService.deactivateKine(id).subscribe({
+      next: () => {
+        this.successMsg.set(
+          `Dr. ${name} désactivé`);
+        this.allKines.update(list =>
+          list.map(k => k.id === id
+            ? { ...k, active: false } : k));
+        this.confirmDeactivateId.set(null);
+        setTimeout(() => this.successMsg.set(''), 3000);
+      },
+      error: (err: { message?: string }) => {
+        this.errorMsg.set(
+          err.message
+          || 'Erreur lors de la désactivation');
+        this.confirmDeactivateId.set(null);
+      }
+    });
+  }
+
+  activateKine(id: string, name: string): void {
+    this.adminService.activateKine(id).subscribe({
+      next: () => {
+        this.successMsg.set(`Dr. ${name} réactivé`);
+        this.allKines.update(list =>
+          list.map(k => k.id === id
+            ? { ...k, active: true } : k));
+        setTimeout(() => this.successMsg.set(''), 3000);
+      },
+      error: (err: { message?: string }) => {
+        this.errorMsg.set(
+          err.message
+          || 'Erreur lors de la réactivation');
+      }
+    });
+  }
+
+  // ══════════════════════════════════════════
+  // SUPPRESSION DÉFINITIVE
+  // ══════════════════════════════════════════
   askDelete(id: string): void {
     this.confirmDeleteId.set(id);
   }
@@ -129,13 +196,13 @@ export class KinesComponent implements OnInit {
     this.adminService.deleteKine(id).subscribe({
       next: () => {
         this.successMsg.set(
-          `Dr. ${name} supprimé définitivement`);
+          `${name} supprimé définitivement`);
         this.allKines.update(list =>
           list.filter(k => k.id !== id));
         this.confirmDeleteId.set(null);
         setTimeout(() => this.successMsg.set(''), 3000);
       },
-      error: (err: { message: string }) => {
+      error: (err: { message?: string }) => {
         this.errorMsg.set(
           err.message
           || 'Impossible de supprimer ce kiné');

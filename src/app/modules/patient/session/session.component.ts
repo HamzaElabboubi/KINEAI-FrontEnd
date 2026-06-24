@@ -8,6 +8,8 @@ import { ExerciseService }
   from '../../../core/services/exercise.service';
 import { SessionService }
   from '../../../core/services/session.service';
+import { PatientService }
+  from '../../../core/services/patient.service';
 import { AuthService }
   from '../../../core/services/auth.service';
 import {
@@ -48,10 +50,12 @@ export class SessionComponent
   private router          = inject(Router);
   private ngZone          = inject(NgZone);
   private rehabPlanService = inject(RehabPlanService);
+  private patientService = inject(PatientService);
+
   // ══════════════════════════════════════════
   // SIGNAUX ÉTAT
   // ══════════════════════════════════════════
-  activePlanId = signal<string | null>(null);
+  activePlanId     = signal<string | null>(null);
   phase            = signal<SessionPhase>('SELECT');
   exercises        = signal<ExerciseResponse[]>([]);
   selectedEx       = signal<ExerciseResponse | null>(null);
@@ -101,7 +105,7 @@ export class SessionComponent
         + ' de mieux détecter vos articulations.'
     },
     {
-      icon: '🎯',
+      icon: '📝',
       title: 'Votre exercice',
       desc:
         'Lisez attentivement les paramètres de'
@@ -122,6 +126,18 @@ export class SessionComponent
     'LEFT_KNEE': 25,      'RIGHT_KNEE': 26,
     'LEFT_ANKLE': 27,     'RIGHT_ANKLE': 28,
     'LEFT_EAR': 7,        'RIGHT_EAR': 8
+  };
+
+  // ✅ Nouveau — noms français des articulations
+  // pour les messages de feedback précis
+  private readonly JOINT_NAMES_FR:
+    Record<number, string> = {
+    11: 'épaule gauche',   12: 'épaule droite',
+    13: 'coude gauche',    14: 'coude droit',
+    15: 'poignet gauche',  16: 'poignet droit',
+    23: 'hanche gauche',   24: 'hanche droite',
+    25: 'genou gauche',    26: 'genou droit',
+    27: 'cheville gauche', 28: 'cheville droite'
   };
 
   // ══════════════════════════════════════════
@@ -150,20 +166,38 @@ export class SessionComponent
   private readonly HISTORY_SIZE = 5;
 
   // ── Speech ────────────────────────────────
-   // ── Speech ────────────────────────────────
   private readonly speech = window.speechSynthesis;
   private lastSpokenMsg = '';
   private lastSpeakTime = 0;
-  private lastVisibilityWarning = 0;   // ✅ Nouveau
+  private lastVisibilityWarning = 0;
+  private startDirectionSpoken = false;   // ✅ Nouveau
 
   protected readonly Math = Math;
 
+
+  private currentPatientLevel: string | null = null;
+
+private loadCurrentLevel(): void {
+  this.patientService.getMyProfile().subscribe({
+    next: (profile) => {
+      this.currentPatientLevel = profile.level;
+    },
+    error: (err: { message?: string }) => {
+      console.error(
+        'Impossible de charger le niveau du patient :',
+        err.message || err);
+    }
+  });
+}
   // ══════════════════════════════════════════
   // GETTERS
   // ══════════════════════════════════════════
   get patientName(): string {
     return this.authService.getFullName() || 'Patient';
   }
+  get patientLevel(): string {
+  return this.currentPatientLevel  || 'Inconnu'; ;
+}
 
   get progressPct(): number {
     const target = this.selectedEx()?.repsTarget ?? 10;
@@ -171,12 +205,22 @@ export class SessionComponent
       Math.round((this.repsCompleted() / target) * 100));
   }
 
+  // ✅ Nouveau — niveau de feedback pour colorer
+  // le badge à l'écran (vert / jaune / rouge)
+  get feedbackLevel(): 'good' | 'close' | 'far' {
+    if (this.isConformant()) return 'good';
+    const msg = this.feedback();
+    if (msg.includes('🟡')) return 'close';
+    return 'far';
+  }
+
   // ══════════════════════════════════════════
   // LIFECYCLE
   // ══════════════════════════════════════════
   ngOnInit(): void {
     this.loadExercises();
-      this.loadActivePlanId();
+    this.loadActivePlanId();
+    this.loadCurrentLevel();
   }
 
   ngOnDestroy(): void {
@@ -186,27 +230,24 @@ export class SessionComponent
   // ══════════════════════════════════════════
   // EXERCICES
   // ══════════════════════════════════════════
-  // ✅ Après — exercices filtrés par pathologie + niveau
-loadExercises(): void {
-  this.exerciseService.getMyExercises().subscribe({
-    next: (exs: ExerciseResponse[]) => {
-      this.exercises.set(exs);
-      if (exs.length === 0) {
+  loadExercises(): void {
+    this.exerciseService.getMyExercises().subscribe({
+      next: (exs: ExerciseResponse[]) => {
+        this.exercises.set(exs);
+        if (exs.length === 0) {
+          this.errorMsg.set(
+            'Aucun exercice disponible pour le moment.'
+            + ' Contactez votre kinésithérapeute.');
+        }
+      },
+      error: (err: { message?: string }) => {
         this.errorMsg.set(
-          'Aucun exercice disponible pour le moment.'
-          + ' Contactez votre kinésithérapeute.');
+          err.message
+          || 'Impossible de charger vos exercices.'
+             + ' Contactez votre kinésithérapeute.');
       }
-    },
-    error: (err: { message?: string }) => {
-      // ✅ Le backend renvoie maintenant un message
-      // clair si aucun plan actif n'existe
-      this.errorMsg.set(
-        err.message
-        || 'Impossible de charger vos exercices.'
-           + ' Contactez votre kinésithérapeute.');
-    }
-  });
-}
+    });
+  }
 
   selectExercise(ex: ExerciseResponse): void {
     this.selectedEx.set(ex);
@@ -274,50 +315,52 @@ loadExercises(): void {
       this.currentStep.update(s => s - 1);
     }
   }
+
   private loadActivePlanId(): void {
-  this.rehabPlanService.getMyActivePlan().subscribe({
-    next: (plan) => this.activePlanId.set(plan.id),
-    error: () => this.activePlanId.set(null)
-  });
-}
+    this.rehabPlanService.getMyActivePlan().subscribe({
+      next: (plan) => this.activePlanId.set(plan.id),
+      error: () => this.activePlanId.set(null)
+    });
+  }
 
   // ══════════════════════════════════════════
   // DÉMARRER SÉANCE
   // ══════════════════════════════════════════
   startSession(): void {
-  const ex = this.selectedEx();
-  if (!ex) return;
+    const ex = this.selectedEx();
+    if (!ex) return;
 
-  if (!this.isValidJointConfig(ex)) {
-    this.errorMsg.set(
-      'Cet exercice n\'a pas de configuration'
-      + ' MediaPipe valide. Contactez l\'administrateur.');
-    return;
+    if (!this.isValidJointConfig(ex)) {
+      this.errorMsg.set(
+        'Cet exercice n\'a pas de configuration'
+        + ' MediaPipe valide. Contactez l\'administrateur.');
+      return;
+    }
+
+    this.sessionService.start({
+      exerciseId: ex.id,
+      planId: this.activePlanId()
+    }).subscribe({
+      next: (session: SessionResponse) => {
+        this.currentSession.set(session);
+        this.currentStep.set(0);
+        this.phase.set('INSTRUCTIONS');
+      },
+      error: (err: { message: string }) => {
+        this.errorMsg.set(
+          err.message || 'Erreur démarrage séance');
+      }
+    });
   }
 
-  this.sessionService.start({
-    exerciseId: ex.id,
-    planId: this.activePlanId()   // ✅ Ajout
-  }).subscribe({
-    next: (session: SessionResponse) => {
-      this.currentSession.set(session);
-      this.currentStep.set(0);
-      this.phase.set('INSTRUCTIONS');
-    },
-    error: (err: { message: string }) => {
-      this.errorMsg.set(
-        err.message || 'Erreur démarrage séance');
-    }
-  });
-}
-
-getToleranceLabel(toleranceDeg: number | undefined): string {
-  if (!toleranceDeg) return 'Précision modérée';
-  if (toleranceDeg >= 15) return 'Mouvement souple accepté';
-  if (toleranceDeg >= 8) return 'Précision modérée requise';
-  return 'Mouvement précis demandé';
-}
-
+  getToleranceLabel(
+    toleranceDeg: number | undefined
+  ): string {
+    if (!toleranceDeg) return 'Précision modérée';
+    if (toleranceDeg >= 15) return 'Mouvement souple accepté';
+    if (toleranceDeg >= 8) return 'Précision modérée requise';
+    return 'Mouvement précis demandé';
+  }
 
   private isValidJointConfig(
     ex: ExerciseResponse
@@ -461,7 +504,27 @@ getToleranceLabel(toleranceDeg: number | undefined): string {
     return indices;
   }
 
-// ══════════════════════════════════════════
+  // ══════════════════════════════════════════
+  // IDENTIFICATION PARTIE DU CORPS MANQUANTE
+  // ══════════════════════════════════════════
+  // Permet de dire au patient PRÉCISÉMENT quelle
+  // articulation n'est plus visible, plutôt qu'un
+  // message générique "replacez-vous"
+  private getMissingBodyPart(
+    landmarks: any[],
+    jointIndices: number[]
+  ): string {
+    for (const idx of jointIndices) {
+      const lm = landmarks[idx];
+      if (!lm || (lm.visibility ?? 0) < 0.6) {
+        return this.JOINT_NAMES_FR[idx]
+          || 'une partie de votre corps';
+      }
+    }
+    return 'votre corps';
+  }
+
+  // ══════════════════════════════════════════
   // TRAITEMENT RÉSULTATS MEDIAPIPE
   // ══════════════════════════════════════════
   private processResults(results: any): void {
@@ -505,30 +568,35 @@ getToleranceLabel(toleranceDeg: number | undefined): string {
     // sur l'articulation propre à CET exercice
     if (this.phase() === 'SESSION') {
 
-      // ✅ Vérification — l'articulation cible doit
+      // Vérification — l'articulation cible doit
       // être réellement visible, pas juste une
       // position devinée par MediaPipe
       const jointsVisible = this.areTrackedJointsVisible(
         results.poseLandmarks, indices);
 
       if (!jointsVisible) {
+        // ✅ Identifie précisément la partie manquante
+        const missingPart = this.getMissingBodyPart(
+          results.poseLandmarks, indices);
+
         this.feedback.set(
-          '⚠️ Articulation non visible — replacez-vous'
-          + ' face à la caméra');
+          `⚠️ Je ne vois plus votre ${missingPart}`
+          + ` — replacez-vous face à la caméra`);
         this.isConformant.set(false);
         this.drawFeedback(ctx, canvas, false);
 
-        // ✅ Reset de la machine à états — empêche
+        // Reset de la machine à états — empêche
         // un faux positif si le patient cache puis
         // remontre l'articulation en plein mouvement
         this.repPhase = 'NEUTRAL';
         this.angleHistory = [];
 
-        // ✅ Alerte vocale anti-spam — un seul rappel
+        // Alerte vocale anti-spam — un seul rappel
         // toutes les 4 secondes
         const now = Date.now();
         if (now - this.lastVisibilityWarning > 4000) {
-          this.speak('Replacez-vous face à la caméra');
+          this.speak(
+            `Je ne vois plus votre ${missingPart}`);
           this.lastVisibilityWarning = now;
         }
 
@@ -568,13 +636,6 @@ getToleranceLabel(toleranceDeg: number | undefined): string {
   // VÉRIFICATION VISIBILITÉ ARTICULATION CIBLE
   // (phase SESSION uniquement)
   // ══════════════════════════════════════════
-  // MediaPipe peut renvoyer des coordonnées
-  // "devinées" pour un point caché, avec une
-  // visibility très basse. Sans cette vérification,
-  // un angle serait calculé sur une position
-  // fictive et pourrait valider une répétition
-  // alors que l'articulation n'est pas réellement
-  // visible (genou caché, hors champ, occulté...).
   private areTrackedJointsVisible(
     landmarks: any[],
     jointIndices: number[]
@@ -641,7 +702,7 @@ getToleranceLabel(toleranceDeg: number | undefined): string {
       ctx.stroke();
     });
 
-    // ✅ Articulation cible — DYNAMIQUE selon l'exercice
+    // Articulation cible — DYNAMIQUE selon l'exercice
     // jointIndices[1] = le sommet de l'angle mesuré
     // (genou pour exercice genou, épaule pour exercice
     // épaule, etc.)
@@ -789,14 +850,30 @@ getToleranceLabel(toleranceDeg: number | undefined): string {
       if (navigator.vibrate) {
         navigator.vibrate(50);
       }
+      // ✅ Réinitialise pour permettre un nouveau
+      // rappel de direction au prochain cycle
+      this.startDirectionSpoken = false;
     }
 
+    // ✅ Feedback à 3 paliers — vert / jaune / rouge
+    // au lieu de juste conforme/non conforme
     if (conformant) {
-      this.feedback.set('Excellent — continuez !');
+      this.feedback.set('✅ Parfait, maintenez !');
+    } else if (diff <= ex.toleranceDeg * 1.5) {
+      this.feedback.set('🟡 Presque... continuez');
     } else {
-      this.feedback.set(
-        `Ciblez ${ex.targetAngle}°`
-        + ` — actuel : ${angle}°`);
+      const direction = angle < ex.targetAngle
+        ? '⬆️ Pliez davantage'
+        : '⬇️ Redressez légèrement';
+      this.feedback.set(direction);
+    }
+
+    // ✅ Direction explicite une seule fois au
+    // démarrage de chaque nouveau cycle de mouvement
+    if (this.repPhase === 'NEUTRAL'
+        && !this.startDirectionSpoken) {
+      this.speak('Pliez doucement jusqu\'au repère');
+      this.startDirectionSpoken = true;
     }
 
     const target = ex.repsTarget ?? 10;
@@ -876,16 +953,6 @@ getToleranceLabel(toleranceDeg: number | undefined): string {
   // ══════════════════════════════════════════
   // CALCUL ANGLE ARTICULAIRE — DYNAMIQUE
   // ══════════════════════════════════════════
-
-  /**
-   * Calcule l'angle de l'articulation cible en
-   * utilisant les 3 landmarks définis par
-   * l'exercice (jointIndices).
-   * jointIndices[0] = point A (ex: hanche)
-   * jointIndices[1] = sommet, articulation mesurée
-   *                    (ex: genou, épaule, coude)
-   * jointIndices[2] = point C (ex: cheville)
-   */
   private calculateAngle(
     landmarks: any[],
     jointIndices: number[]

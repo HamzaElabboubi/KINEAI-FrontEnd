@@ -106,7 +106,8 @@ export class AuthService {
     } else if (error.status === 400) {
       message = error.error?.message || 'Données invalides';
     } else if (error.status === 403) {
-      message = 'Compte en attente de validation';
+      message = error.error?.message
+        || 'Compte en attente de validation';
     } else if (error.error?.message) {
       message = error.error.message;
     }

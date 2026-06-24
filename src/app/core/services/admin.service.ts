@@ -11,6 +11,7 @@ export interface KineResponse {
   validated: boolean;
   patientCount: number;
   email: string;
+  active: boolean;
 }
 
 export interface AdminStatsResponse {
@@ -71,6 +72,18 @@ export class AdminService {
   deleteKine(id: string): Observable<void> {
     return this.http.delete<void>(
       `${this.API}/kine/${id}`);
+  }
+
+  // ── Désactiver un kiné ─────────────────────
+  deactivateKine(id: string): Observable<KineResponse> {
+    return this.http.put<KineResponse>(
+      `${this.API}/kine/${id}/deactivate`, {});
+  }
+
+  // ── Réactiver un kiné ──────────────────────
+  activateKine(id: string): Observable<KineResponse> {
+    return this.http.put<KineResponse>(
+      `${this.API}/kine/${id}/activate`, {});
   }
 
   // ── Archiver un patient ────────────────────

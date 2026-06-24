@@ -129,17 +129,18 @@
                         {{ ex.repsTarget }}
                       </p>
                     </div>
-                    <div class="bg-gray-50 rounded-lg p-2
-                                text-center">
-                      <p class="text-xs text-gray-400">
-                        Niveau
-                      </p>
-                      <p class="text-xs font-semibold
-                                text-gray-700">
-                        {{ getLevelLabel(
-                           ex.difficultyLevel) }}
-                      </p>
-                    </div>
+                    <!-- ✅ Après — affiche VOTRE niveau actuel,
+     toujours cohérent avec votre progression -->
+<div class="bg-gray-50 rounded-lg p-2
+            text-center">
+  <p class="text-xs text-gray-400">
+    Votre niveau
+  </p>
+  <p class="text-xs font-semibold
+            text-gray-700">
+    {{ getLevelLabel(patientLevel) }}
+  </p>
+</div>
                   </div>
                 </div>
 
@@ -699,60 +700,24 @@
               }
 
               <!-- Badge feedback SESSION -->
-              @if (phase() === 'SESSION') {
-                <div class="absolute top-3 left-3">
-                  <div class="px-3 py-1.5 rounded-lg
-                              text-sm font-semibold
-                              shadow-md"
-                       [class.bg-green-500]="isConformant()"
-                       [class.text-white]="isConformant()"
-                       [class.bg-red-500]="!isConformant()"
-                       [class.text-white]="!isConformant()">
-                    {{ feedback() }}
-                  </div>
-                </div>
-
-                <!-- Toggle voix -->
-                <div class="absolute top-3 right-3">
-                  <button (click)="toggleVoice()"
-                          class="w-9 h-9 rounded-full
-                                 flex items-center
-                                 justify-center shadow-md
-                                 transition-colors"
-                          [class.bg-blue-600]="voiceEnabled()"
-                          [class.text-white]="voiceEnabled()"
-                          [class.bg-white]="!voiceEnabled()"
-                          [class.text-gray-400]="!voiceEnabled()">
-                    @if (voiceEnabled()) {
-                      <svg class="w-4 h-4" fill="none"
-                           viewBox="0 0 24 24"
-                           stroke="currentColor">
-                        <path stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M15.536 8.464a5 5 0
-                                 010 7.072M12 6v12m-3.536
-                                 -9.536a5 5 0 000 7.072"/>
-                      </svg>
-                    } @else {
-                      <svg class="w-4 h-4" fill="none"
-                           viewBox="0 0 24 24"
-                           stroke="currentColor">
-                        <path stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M5.586 15H4a1 1 0
-                                 01-1-1v-4a1 1 0 011-1h1.586
-                                 l4.707-4.707C10.923 3.663
-                                 12 4.109 12 5v14c0 .891
-                                 -1.077 1.337-1.707.707
-                                 L5.586 15z M17 14l2-2m0
-                                 0l2-2m-2 2l-2-2m2 2l2 2"/>
-                      </svg>
-                    }
-                  </button>
-                </div>
-              }
+             <!-- Badge feedback SESSION -->
+@if (phase() === 'SESSION') {
+  <div class="absolute top-3 left-3">
+    <div class="px-3 py-1.5 rounded-lg
+                text-sm font-semibold
+                shadow-md"
+         [class.bg-green-500]="feedbackLevel
+           === 'good'"
+         [class.bg-amber-500]="feedbackLevel
+           === 'close'"
+         [class.bg-red-500]="feedbackLevel
+           === 'far'"
+         class="text-white">
+      {{ feedback() }}
+    </div>
+  </div>
+  <!-- ... reste identique (toggle voix) ... -->
+}
             </div>
 
             <!-- Contrôles vidéo -->

@@ -24,4 +24,5 @@ export interface KineResponse {
   validated: boolean;
   patientCount: number;
   email: string;
+  active: boolean;
 }
