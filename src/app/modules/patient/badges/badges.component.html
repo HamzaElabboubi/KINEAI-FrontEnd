@@ -1,0 +1,128 @@
+<div class="min-h-screen bg-gray-50 flex">
+
+  <app-patient-sidebar></app-patient-sidebar>
+
+  <div class="ml-56 flex-1 px-8 py-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between
+                mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">
+          Mes badges
+        </h1>
+        <p class="text-sm text-gray-400 mt-1">
+          Suivez vos accomplissements dans votre
+          parcours de rééducation
+        </p>
+      </div>
+      <span class="text-sm bg-amber-50 text-amber-600
+                   px-4 py-2 rounded-xl font-medium">
+        {{ unlockedCount }} / {{ allBadges.length }}
+        débloqués
+      </span>
+    </div>
+
+    @if (errorMsg()) {
+      <div class="bg-red-50 border border-red-200
+                  rounded-xl p-4 mb-4 text-sm
+                  text-red-600">
+        {{ errorMsg() }}
+      </div>
+    }
+
+    @if (isLoading()) {
+      <div class="flex justify-center py-16">
+        <svg class="w-5 h-5 animate-spin text-blue-500"
+             fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12"
+                  r="10" stroke="currentColor"
+                  stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0
+                   0 5.373 0 12h4z"/>
+        </svg>
+      </div>
+    }
+
+    @if (!isLoading()) {
+      <div class="grid grid-cols-3 gap-5">
+        @for (badge of allBadges; track badge.type) {
+          <div class="bg-white rounded-2xl p-6
+                      text-center border-2
+                      transition-all"
+               [class.border-amber-200]="isUnlocked(
+                 badge.type)"
+               [class.border-gray-100]="!isUnlocked(
+                 badge.type)">
+
+            <div class="text-5xl mb-4"
+                 [class.opacity-100]="isUnlocked(
+                   badge.type)"
+                 [class.opacity-30]="!isUnlocked(
+                   badge.type)"
+                 [class.grayscale]="!isUnlocked(
+                   badge.type)">
+              {{ badge.icon }}
+            </div>
+
+            <h3 class="text-base font-semibold mb-2"
+                [class.text-gray-900]="isUnlocked(
+                  badge.type)"
+                [class.text-gray-400]="!isUnlocked(
+                  badge.type)">
+              {{ badge.label }}
+            </h3>
+
+            <p class="text-xs text-gray-400
+                      leading-relaxed mb-4">
+              {{ badge.description }}
+            </p>
+
+            @if (isUnlocked(badge.type)) {
+              <div class="inline-flex items-center
+                          gap-1.5 bg-amber-50
+                          text-amber-600 text-xs
+                          font-medium px-3 py-1.5
+                          rounded-full">
+                <svg class="w-3.5 h-3.5" fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"/>
+                </svg>
+                Débloqué le {{ getUnlockedDate(
+                  badge.type) | date:'dd/MM/yyyy' }}
+              </div>
+            } @else {
+              <div class="inline-flex items-center
+                          gap-1.5 bg-gray-50
+                          text-gray-400 text-xs
+                          font-medium px-3 py-1.5
+                          rounded-full">
+                <svg class="w-3.5 h-3.5" fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 15v2m-6 4h12a2 2 0
+                           002-2v-6a2 2 0
+                           00-2-2H6a2 2 0
+                           00-2 2v6a2 2 0
+                           002 2zm10-10V7a4
+                           4 0 00-8 0v4h8z"/>
+                </svg>
+                Verrouillé
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>

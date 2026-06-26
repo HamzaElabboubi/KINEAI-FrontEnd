@@ -32,6 +32,12 @@ export const patientRoutes: Routes = [
         .then(c => c.ProfileComponent)
   },
   {
+  path: 'badges',
+  loadComponent: () =>
+    import('./badges/badges.component')
+      .then(c => c.BadgesComponent)
+},
+  {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full'

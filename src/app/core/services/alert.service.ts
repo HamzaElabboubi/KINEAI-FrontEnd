@@ -43,4 +43,10 @@ export class AlertService {
   return this.http.get<AlertResponse[]>(
     `${this.API}/my-patient`);
 }
+
+// ── Toutes mes alertes — historique complet ────
+getAllMyAlerts(): Observable<AlertResponse[]> {
+  return this.http.get<AlertResponse[]>(
+    `${this.API}/my/all`);
+}
 }

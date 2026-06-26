@@ -47,22 +47,22 @@ export class MessagesComponent implements OnInit {
   }
 
   loadAlerts(): void {
-    this.isLoading.set(true);
-    this.errorMsg.set('');
+  this.isLoading.set(true);
+  this.errorMsg.set('');
 
-    this.alertService.getMyAlertsAsPatient().subscribe({
-      next: (alerts: AlertResponse[]) => {
-        this.allAlerts.set(alerts);
-        this.isLoading.set(false);
-      },
-      error: (err: { error?: { message?: string } }) => {
-        this.errorMsg.set(
-          err.error?.message
-          || 'Impossible de charger vos alertes');
-        this.isLoading.set(false);
-      }
-    });
-  }
+  this.alertService.getAllMyAlerts().subscribe({
+    next: (alerts: AlertResponse[]) => {
+      this.allAlerts.set(alerts);
+      this.isLoading.set(false);
+    },
+    error: (err: { error?: { message?: string } }) => {
+      this.errorMsg.set(
+        err.error?.message
+        || 'Impossible de charger les alertes');
+      this.isLoading.set(false);
+    }
+  });
+}
 
   setTab(tab: FilterTab): void {
     this.activeTab.set(tab);

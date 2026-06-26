@@ -50,6 +50,6 @@ export class RehabPlanService {
     patientId: string
   ): Observable<RehabPlanResponse[]> {
     return this.http.get<RehabPlanResponse[]>(
-      `${this.API}/patient/${patientId}`);
+      `${this.API}/patient/${patientId}/history`);
   }
 }
